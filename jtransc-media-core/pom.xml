@@ -23,15 +23,20 @@
 
     <properties>
         <gdx.version>1.9.2</gdx.version>
+        <jtransc.version>0.0.5</jtransc.version>
     </properties>
 
+    <!--
     <parent>
         <groupId>com.jtransc.media</groupId>
         <artifactId>jtransc-media</artifactId>
         <relativePath>..</relativePath>
         <version>0.0.5</version>
     </parent>
+    -->
 
+    <groupId>com.jtransc.media</groupId>
+    <version>0.0.5</version>
     <artifactId>jtransc-media-core</artifactId>
 
     <dependencies>

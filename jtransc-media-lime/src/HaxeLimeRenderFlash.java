@@ -1,13 +1,14 @@
-import lime.app.Application;
-import lime.graphics.Renderer;
-import flash.display.*;
+import flash.display.BitmapData;
+import flash.display.Sprite;
+import flash.display.Stage;
 import flash.display3D.*;
-import flash.display3D.textures.*;
-import flash.utils.*;
+import flash.display3D.textures.RectangleTexture;
+import flash.events.Event;
 import flash.geom.Matrix3D;
-import flash.Lib;
 import haxe.ds.Vector;
+import jtransc.IntStack;
 import lime.Assets;
+import lime.graphics.Image;
 
 class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
     private Stage stage;
@@ -16,89 +17,92 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
     private Program3D textureProgram;
     private Context3D context;
     private RectangleTexture[] textures;
-    private int[] textureIndices;
+    private IntStack textureIndices;
     static public final boolean DEBUG = true;
 
     public HaxeLimeRenderFlash(Sprite rootSprite) {
         this.rootSprite = rootSprite;
         this.stage = rootSprite.stage;
 
-        textureIndices = [for (i in 1...1024) i];
-        textures = [for (i in 0...1024) null];
+        //textureIndices =[for (i in 1.. .1024)i];
+        //textures =[for (i in 0.. .1024)null];
 
         initializeFlash();
     }
 
-    private void initializeFlash() {
-        int W = stage.stageWidth;
-        int H = stage.stageHeight;
-        function __init(e) {
-                stage.stage3Ds[0].removeEventListener(flash.events.Event.CONTEXT3D_CREATE, __init);
-        trace('contex3d created');
+    private void initializeFlash__init(Event e) {
+        stage.stage3Ds[0].removeEventListener(flash.events.Event.CONTEXT3D_CREATE, __init);
+        System.out.println("contex3d created");
         context = stage.stage3Ds[0].context3D;
         context.enableErrorChecking = DEBUG;
         context.configureBackBuffer(W, H, 4, true);
         //context.configureBackBuffer(640, 480, 4, true);
 
-        var assembler = new AGALMiniAssembler();
+        AGALMiniAssembler assembler = new AGALMiniAssembler();
 
         colorProgram = context.createProgram();
         colorProgram.upload(
-                assembler.assemble(Context3DProgramType.VERTEX, [
-                        "m44 op, va0, vc0",
-                "mov v0, va1"
-                //"mov v0, va2"
-        ].join("\n")),
-        assembler.assemble(Context3DProgramType.FRAGMENT, [
-                "mov oc, v0"
-                ].join("\n"))
+                assembler.assemble(Context3DProgramType.VERTEX,
+                        "m44 op, va0, vc0\n" + "mov v0, va1"
+                        //"mov v0, va2"
+                ),
+
+                assembler.assemble(Context3DProgramType.FRAGMENT, "mov oc, v0")
         );
 
         textureProgram = context.createProgram();
         textureProgram.upload(
-                assembler.assemble(Context3DProgramType.VERTEX, [
-                        "m44 op, va0, vc0",
-                "mov v0, va1"
-        ].join("\n")),
-        assembler.assemble(Context3DProgramType.FRAGMENT, [
-                "tex ft0, v0.xyxx, fs0 <2d, linear, mipdisable, clamp>",
-                "mov oc, ft0"
-        ].join("\n"))
+                assembler.assemble(
+                        Context3DProgramType.VERTEX,
+                        "m44 op, va0, vc0\n" +
+                                "mov v0, va1"
+                ),
+                assembler.assemble(Context3DProgramType.FRAGMENT,
+                        "tex ft0, v0.xyxx, fs0 <2d, linear, mipdisable, clamp>\n" +
+                                "mov oc, ft0"
+                )
         );
-        }
-        stage.stage3Ds[0].addEventListener(flash.events.Event.CONTEXT3D_CREATE, __init);
-        stage.stage3Ds[0].requestContext3D();
-        stage.addEventListener(flash.events.Event.RESIZE, function(e) {
-            if (context == null) return;
-            context.configureBackBuffer(stage.stageWidth, stage.stageHeight, 4, true);
-            //render(renderer);
-        });
     }
 
-    private static var FRAGMENT_CONSTANTS = Vector.fromArrayCopy([
+    private void initializeFlash__resize(Event e) {
+        if (context == null) return;
+        context.configureBackBuffer(stage.stageWidth, stage.stageHeight, 4, true);
+        //render(renderer);
+    }
+
+    private void initializeFlash() {
+        int W = stage.stageWidth;
+        int H = stage.stageHeight;
+        stage.stage3Ds[0].addEventListener(flash.events.Event.CONTEXT3D_CREATE, initializeFlash__init);
+        stage.stage3Ds[0].requestContext3D();
+        stage.addEventListener(flash.events.Event.RESIZE, initializeFlash__resize);
+    }
+
+    private static double[] FRAGMENT_CONSTANTS = new double[]{
             -1,  // fc0.x
-    0,   // fc0.y
+            0,   // fc0.y
             1,   // fc0.z
             2,   // fc0.w
             0.5, // fc1.x
             128, // fc1.y
             255, // fc1.z
             512  // fc1.w
-            ]).toData();
+    };
 
-    private static var VERTEX_CONSTANTS = Vector.fromArrayCopy([
+    private static double[] VERTEX_CONSTANTS = new double[]{
             -1,  // vc4.x
-    0,   // vc4.y
+            0,   // vc4.y
             1,   // vc4.z
             2,   // vc4.w
             0.5, // vc5.x
             128, // vc5.y
             255, // vc5.z
             512  // vc5.w
-            ]).toData();
+    };
 
     static private double[] _map3dRaw = new double[16];
-    static public Matrix3D createOrtho(double left, double right, double bottom, double top, double near = -1, double far = 1, Matrix3D target = null) {
+
+    static public Matrix3D createOrtho(double left, double right, double bottom, double top, double near=-1, double far=1, Matrix3D target=null) {
         double[] v = _map3dRaw;
         if (target == null) target = new Matrix3D();
         double a = 2.0 / (right - left);
@@ -109,10 +113,22 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
         double ty = -(top + bottom) / (top - bottom);
         double tz = -(far + near) / (far - near);
 
-        v[0] = a; v[1] = 0; v[2] = 0; v[3] = tx;
-        v[4] = 0; v[5] = b; v[6] = 0; v[7] = ty;
-        v[8] = 0; v[9] = 0; v[10] = c; v[11] = tz;
-        v[12] = 0; v[13] = 0; v[14] = 0; v[15] = 1;
+        v[0] = a;
+        v[1] = 0;
+        v[2] = 0;
+        v[3] = tx;
+        v[4] = 0;
+        v[5] = b;
+        v[6] = 0;
+        v[7] = ty;
+        v[8] = 0;
+        v[9] = 0;
+        v[10] = c;
+        v[11] = tz;
+        v[12] = 0;
+        v[13] = 0;
+        v[14] = 0;
+        v[15] = 1;
 
         target.copyRawDataFrom(v.toData());
         return target;
@@ -125,11 +141,11 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 
     @Override
     public int createTexture(String path, int width, int height) {
-        trace('HaxeLimeRenderFlash.createTexture($path)');
-        var image = Assets.getImage(path);
-        var bitmapData = image.src;
-        var id = textureIndices.pop();
-        var texture = context.createRectangleTexture(
+        System.out.println("HaxeLimeRenderFlash.createTexture(" + path + ")");
+        Image image = Assets.getImage(path, true);
+        BitmapData bitmapData = (BitmapData) image.src;
+        int id = textureIndices.pop();
+        RectangleTexture texture = context.createRectangleTexture(
                 width, height,
                 Context3DTextureFormat.BGRA,
                 false
@@ -141,7 +157,7 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 
     @Override
     public void disposeTexture(int id) {
-        trace('HaxeLimeRenderFlash.disposeTexture(id)');
+        System.out.println("HaxeLimeRenderFlash.disposeTexture(id)");
         textures[id].dispose();
         textures[id] = null;
         textureIndices.push(id);
@@ -159,7 +175,7 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
         Context3D context = this.context;
 
         if (context == null) {
-            trace('context == null');
+            System.out.println("context == null");
             return;
         }
         context.clear(0.2, 0.2, 0.2, 1);
@@ -170,13 +186,13 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 
             var verticesOut = new Vector<Float>(vertexCount * 6);
             var indicesOut = new Vector<UInt>(indexCount);
-            for (n in 0 ... verticesOut.length) verticesOut[n] = _vertices[n];
-            for (n in 0 ... indicesOut.length) indicesOut[n] = _indices[n];
+            for (n in 0 ...verticesOut.length)verticesOut[n] = _vertices[n];
+            for (n in 0 ...indicesOut.length)indicesOut[n] = _indices[n];
 
-            var vertexBuffer = context.createVertexBuffer(Std.int(verticesOut.length / 6), 6);
-            var indexBuffer = context.createIndexBuffer(indicesOut.length);
+            VertexBuffer3D vertexBuffer = context.createVertexBuffer(verticesOut.length / 6, 6);
+            IndexBuffer3D indexBuffer = context.createIndexBuffer(indicesOut.length);
 
-            vertexBuffer.uploadFromVector(verticesOut.toData(), 0, Std.int(verticesOut.length / 6));
+            vertexBuffer.uploadFromVector(verticesOut.toData(), 0, verticesOut.length / 6);
             indexBuffer.uploadFromVector(indicesOut.toData(), 0, indicesOut.length);
 
             context.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
@@ -193,20 +209,20 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 
             //context.setSamplerStateAt(0, Context3DWrapMode.CLAMP, Context3DTextureFilter.LINEAR, Context3DMipFilter.MIPNONE);
 
-            for (batchId in 0 ... batchCount) {
-                var batchOffset = batchId * 16;
-                var indexStart    = _batches[batchOffset + 0];
-                var triangleCount = _batches[batchOffset + 1];
-                var textureId     = _batches[batchOffset + 2];
-                var blendMode     = _batches[batchOffset + 3];
-                var maskType      = _batches[batchOffset + 4];
-                var stencilIndex  = _batches[batchOffset + 5];
-                var scissorLeft   = _batches[batchOffset + 6];
-                var scissorTop    = _batches[batchOffset + 7];
-                var scissorRight  = _batches[batchOffset + 8];
-                var scissorBottom = _batches[batchOffset + 9];
+            for (int batchId = 0; batchId < batchCount; batchId++) {
+                int batchOffset = batchId * 16;
+                int indexStart = _batches[batchOffset + 0];
+                int triangleCount = _batches[batchOffset + 1];
+                int textureId = _batches[batchOffset + 2];
+                int blendMode = _batches[batchOffset + 3];
+                int maskType = _batches[batchOffset + 4];
+                int stencilIndex = _batches[batchOffset + 5];
+                int scissorLeft = _batches[batchOffset + 6];
+                int scissorTop = _batches[batchOffset + 7];
+                int scissorRight = _batches[batchOffset + 8];
+                int scissorBottom = _batches[batchOffset + 9];
 
-                var texture = textures[textureId];
+                RectangleTexture texture = textures[textureId];
 
                 //context.setProgram(colorProgram);
                 context.setProgram(textureProgram);
@@ -215,25 +231,41 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
                 boolean premultiplied = false;
                 if (!premultiplied) {
                     switch (blendMode) {
-                        case HaxeLimeRenderImpl.BLEND_NONE    :context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
-                        case HaxeLimeRenderImpl.BLEND_NORMAL  :context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
-                        case HaxeLimeRenderImpl.BLEND_ADD     :context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE);
-                        case HaxeLimeRenderImpl.BLEND_MULTIPLY:context.setBlendFactors(Context3DBlendFactor.DESTINATION_COLOR, Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR);
-                        case HaxeLimeRenderImpl.BLEND_SCREEN  :context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE);
-                        case HaxeLimeRenderImpl.BLEND_ERASE   :context.setBlendFactors(Context3DBlendFactor.ZERO, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
-                        case HaxeLimeRenderImpl.BLEND_BELOW   :context.setBlendFactors(Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA, Context3DBlendFactor.DESTINATION_ALPHA);
-                        default:context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
+                        case HaxeLimeRenderImpl.BLEND_NONE:
+                            context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
+                        case HaxeLimeRenderImpl.BLEND_NORMAL:
+                            context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
+                        case HaxeLimeRenderImpl.BLEND_ADD:
+                            context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE);
+                        case HaxeLimeRenderImpl.BLEND_MULTIPLY:
+                            context.setBlendFactors(Context3DBlendFactor.DESTINATION_COLOR, Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR);
+                        case HaxeLimeRenderImpl.BLEND_SCREEN:
+                            context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE);
+                        case HaxeLimeRenderImpl.BLEND_ERASE:
+                            context.setBlendFactors(Context3DBlendFactor.ZERO, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
+                        case HaxeLimeRenderImpl.BLEND_BELOW:
+                            context.setBlendFactors(Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA, Context3DBlendFactor.DESTINATION_ALPHA);
+                        default:
+                            context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
                     }
                 } else {
                     switch (blendMode) {
-                        case HaxeLimeRenderImpl.BLEND_NONE    : context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
-                        case HaxeLimeRenderImpl.BLEND_NORMAL  : context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
-                        case HaxeLimeRenderImpl.BLEND_ADD     : context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE);
-                        case HaxeLimeRenderImpl.BLEND_MULTIPLY: context.setBlendFactors(Context3DBlendFactor.DESTINATION_COLOR, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
-                        case HaxeLimeRenderImpl.BLEND_SCREEN  : context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR);
-                        case HaxeLimeRenderImpl.BLEND_ERASE   : context.setBlendFactors(Context3DBlendFactor.ZERO, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
-                        case HaxeLimeRenderImpl.BLEND_BELOW   : context.setBlendFactors(Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA, Context3DBlendFactor.DESTINATION_ALPHA);
-                        default: context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
+                        case HaxeLimeRenderImpl.BLEND_NONE:
+                            context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
+                        case HaxeLimeRenderImpl.BLEND_NORMAL:
+                            context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
+                        case HaxeLimeRenderImpl.BLEND_ADD:
+                            context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE);
+                        case HaxeLimeRenderImpl.BLEND_MULTIPLY:
+                            context.setBlendFactors(Context3DBlendFactor.DESTINATION_COLOR, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
+                        case HaxeLimeRenderImpl.BLEND_SCREEN:
+                            context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR);
+                        case HaxeLimeRenderImpl.BLEND_ERASE:
+                            context.setBlendFactors(Context3DBlendFactor.ZERO, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
+                        case HaxeLimeRenderImpl.BLEND_BELOW:
+                            context.setBlendFactors(Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA, Context3DBlendFactor.DESTINATION_ALPHA);
+                        default:
+                            context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
                     }
                 }
 

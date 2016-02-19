@@ -24,9 +24,9 @@ class HaxeLimeRenderImpl {
 
     public void render(
             int width, int height,
-            haxe.io.Float32Array _vertices, int vertexCount,
-            haxe.io.UInt16Array _indices, int indexCount,
-            haxe.io.Int32Array _batches, int batchCount
+            float[] _vertices, int vertexCount,
+            char[] _indices, int indexCount,
+            int[] _batches, int batchCount
     ) {
 
     }

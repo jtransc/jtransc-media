@@ -1,4 +1,10 @@
+import flash.display3D.Context3DProgramType;
+import flash.utils.ByteArray;
+
 public class AGALMiniAssembler {
+    public ByteArray assemble(Context3DProgramType type, String code) {
+        throw new RuntimeException("AGALMiniAssembler not implemented!");
+    }
 }
 
 /*

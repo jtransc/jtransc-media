@@ -1,11 +1,21 @@
+import jtransc.IntStack;
+import jtransc.annotation.JTranscConditional;
 import lime.Assets;
 import lime.graphics.GLRenderContext;
-import lime.graphics.opengl.*;
+import lime.graphics.Image;
+import lime.graphics.opengl.GLBuffer;
+import lime.graphics.opengl.GLProgram;
+import lime.graphics.opengl.GLTexture;
+import lime.graphics.opengl.GLUniformLocation;
 import lime.math.Matrix4;
-import lime.utils.*;
+import lime.utils.GLUtils;
 
 class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
+    @JTranscConditional("desktop")
     static public boolean DESKTOP = false;
+
+    @JTranscConditional("js")
+    static public boolean JS = false;
 
     public GLRenderContext gl;
 
@@ -18,7 +28,7 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
     private int glColor0Attribute;
     private int glColor1Attribute;
     private GLTexture[] textures;
-    private int[] textureIndices;
+    private IntStack textureIndices;
 
     private GLBuffer indicesBuffer = null;
     private GLBuffer verticesBuffer = null;
@@ -28,24 +38,26 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
     public HaxeLimeRenderGL(GLRenderContext gl) {
         this.gl = gl;
 
-        textureIndices =[for (i in 1.. .1024)i];
-        textures =[for (i in 0.. .1024)null];
+        for (int n = 0; n < 1024; n++) {
+            textureIndices.push(n);
+            textures[n] = null;
+        }
 
         init();
     }
 
     private void init() {
-        String PREFIX =
+        String PREFIX = "" +
                 "#ifdef GL_ES\n" +
-                        "#define LOWP lowp\n" +
-                        "#define MED mediump\n" +
-                        "#define HIGH highp\n" +
-                        "precision mediump float;\n" +
-                        "#else\n" +
-                        "#define MED\n" +
-                        "#define LOWP\n" +
-                        "#define HIGH\n" +
-                        "#endif\n";
+                "#define LOWP lowp\n" +
+                "#define MED mediump\n" +
+                "#define HIGH highp\n" +
+                "precision mediump float;\n" +
+                "#else\n" +
+                "#define MED\n" +
+                "#define LOWP\n" +
+                "#define HIGH\n" +
+                "#endif\n";
 
         if (ENABLE_COLORS) {
             PREFIX += "#define A_COLORS 1\n";
@@ -119,21 +131,21 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
 
     @Override
     public int createTexture(String path, int width, int height) {
-        trace('HaxeLimeRenderGL.createTexture($path)');
+        System.out.println("HaxeLimeRenderGL.createTexture(" + path + ")");
         //path = 'assets/image.png';
         //trace('HaxeLimeRenderGL.createTexture[2]($path)');
-        var image = Assets.getImage(path);
-        var id = textureIndices.pop();
-        var glTexture = textures[id] = gl.createTexture();
+        Image image = Assets.getImage(path, true);
+        int id = textureIndices.pop();
+        int glTexture = textures[id] = gl.createTexture();
 
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        #if js
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image.src);
-        #else
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.buffer.width, image.buffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image.data);
-        #end
+        if (JS) {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image.src);
+        } else {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.buffer.width, image.buffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image.data);
+        }
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.bindTexture(gl.TEXTURE_2D, null);
@@ -144,7 +156,7 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
 
     @Override
     public void disposeTexture(int id) {
-        trace('HaxeLimeRenderGL.disposeTexture(id)');
+        System.out.println("HaxeLimeRenderGL.disposeTexture(id)");
         gl.deleteTexture(textures[id]);
         textures[id] = null;
         textureIndices.push(id);

@@ -23,10 +23,11 @@ public class HaxeLimeAudio {
     }
 
 
-    static public void createSound(String path) {
+    static public int createSound(String path) {
         HaxeLimeAudio instance = getInstance();
         int soundId = instance.ids.pop();
-        instance.sources[soundId] = new AudioSource(Assets.getAudioBuffer(path));
+        //offset:Int = 0, length:Null<Int> = null, loops:Int = 0
+        instance.sources[soundId] = new AudioSource(Assets.getAudioBuffer(path, true), 0, 0, 0);
         return soundId;
     }
 

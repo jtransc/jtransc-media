@@ -22,17 +22,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <gdx.version>1.9.2</gdx.version>
+        <jtransc.version>0.0.5</jtransc.version>
     </properties>
 
-    <parent>
-        <groupId>com.jtransc.media</groupId>
-        <artifactId>jtransc-media</artifactId>
-        <relativePath>..</relativePath>
-        <version>0.0.5</version>
-    </parent>
-
-    <artifactId>jtransc-media-lime</artifactId>
+    <groupId>com.jtransc.media</groupId>
+    <artifactId>jtransc-media-imports-flash</artifactId>
+    <version>0.0.5</version>
 
     <dependencies>
         <dependency>
@@ -45,15 +40,28 @@
             <artifactId>jtransc-media-core</artifactId>
             <version>${jtransc.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.jtransc.media</groupId>
-            <artifactId>jtransc-media-imports-lime</artifactId>
-            <version>${jtransc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jtransc.media</groupId>
-            <artifactId>jtransc-media-imports-flash</artifactId>
-            <version>${jtransc.version}</version>
-        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.jtransc</groupId>
+                <artifactId>jtransc-buildjar-maven-plugin</artifactId>
+                <version>${jtransc.version}</version>
+                <configuration>
+                    <target>swf</target>
+                    <includePackagesRec>
+                        <param>flash.system</param>
+                    </includePackagesRec>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jtransc-buildjar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

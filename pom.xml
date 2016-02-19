@@ -73,8 +73,9 @@
     <modules>
         <module>jtransc-game</module>
         <module>jtransc-media-core</module>
-        <module>jtransc-media-lime</module>
         <module>jtransc-media-libgdx</module>
+        <module>jtransc-media-lime</module>
+        <module>jtransc-media-lime-imports</module>
     </modules>
 
     <dependencies>

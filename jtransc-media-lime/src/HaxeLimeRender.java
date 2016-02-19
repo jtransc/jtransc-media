@@ -10,6 +10,7 @@ class HaxeLimeRender {
 
     static public void setRenderer(Renderer renderer) {
         if (HaxeLimeRender.impl != null) return;
+
         /*
         HaxeLimeRender.impl = switch (renderer.context) {
             #if flash
@@ -20,12 +21,12 @@ class HaxeLimeRender {
             default: throw 'Not supported renderer $renderer';
         }
         */
-        throw new RuntimeException("Much implement this!")
+
+        throw new RuntimeException("Much implement this!");
     }
 
     static public boolean isInitialized() {
-        if (HaxeLimeRender.impl == null) return false;
-        return HaxeLimeRender.impl.isInitialized();
+        return HaxeLimeRender.impl != null && HaxeLimeRender.impl.isInitialized();
     }
 
     static public void setSize(int width, int height) {
