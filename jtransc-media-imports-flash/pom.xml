@@ -35,11 +35,6 @@
             <artifactId>jtransc-rt-core</artifactId>
             <version>${jtransc.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.jtransc.media</groupId>
-            <artifactId>jtransc-media-core</artifactId>
-            <version>${jtransc.version}</version>
-        </dependency>
     </dependencies>
 
     <build>

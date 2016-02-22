@@ -19,17 +19,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>jtransc-media</artifactId>
+    <groupId>com.jtransc.media</groupId>
+    <artifactId>jtransc-media-parent</artifactId>
+    <version>0.0.5</version>
     <packaging>pom</packaging>
 
     <parent>
-        <groupId>com.jtransc.media</groupId>
-        <artifactId>jtransc-media-parent</artifactId>
-        <relativePath>jtransc-media-parent</relativePath>
-        <version>0.0.5</version>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>5</version>
     </parent>
 
-    <name>jtransc media</name>
+    <name>jtransc media parent</name>
     <description>JVM AOT compiler currently generating Haxe, with initial focus on kotlin and games.</description>
     <url>http://github.com/jtransc/jtransc</url>
 
@@ -68,17 +69,7 @@
         <url>git://git@github.com:jtransc/jtransc.git</url>
     </scm>
 
-    <modules>
-        <module>jtransc-media-core</module>
-        <module>jtransc-media-imports-flash</module>
-        <module>jtransc-media-imports-lime</module>
-        <module>jtransc-media-libgdx</module>
-        <module>jtransc-media-lime</module>
-        <module>jtransc-game</module>
-    </modules>
-
     <dependencies>
-
         <!--BDD testing -->
         <dependency>
             <groupId>junit</groupId>

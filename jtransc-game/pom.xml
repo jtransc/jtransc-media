@@ -23,8 +23,8 @@
 
     <parent>
         <groupId>com.jtransc.media</groupId>
-        <artifactId>jtransc-media</artifactId>
-        <relativePath>..</relativePath>
+        <artifactId>jtransc-media-parent</artifactId>
+        <relativePath>../jtransc-media-parent</relativePath>
         <version>0.0.5</version>
     </parent>
 

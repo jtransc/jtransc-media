@@ -70,9 +70,12 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
         //render(renderer);
     }
 
+    private int W;
+    private int H;
+
     private void initializeFlash() {
-        int W = stage.stageWidth;
-        int H = stage.stageHeight;
+        W = stage.stageWidth;
+        H = stage.stageHeight;
         stage.stage3Ds[0].addEventListener(flash.events.Event.CONTEXT3D_CREATE, initializeFlash__init);
         stage.stage3Ds[0].requestContext3D();
         stage.addEventListener(flash.events.Event.RESIZE, initializeFlash__resize);
@@ -102,7 +105,11 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 
     static private double[] _map3dRaw = new double[16];
 
-    static public Matrix3D createOrtho(double left, double right, double bottom, double top, double near=-1, double far=1, Matrix3D target=null) {
+    static public Matrix3D createOrtho(double left, double right, double bottom, double top) {
+        return createOrtho(left, right, bottom, top, -1, 1, null);
+    }
+
+    static public Matrix3D createOrtho(double left, double right, double bottom, double top, double near, double far, Matrix3D target) {
         double[] v = _map3dRaw;
         if (target == null) target = new Matrix3D();
         double a = 2.0 / (right - left);
@@ -142,7 +149,7 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
     @Override
     public int createTexture(String path, int width, int height) {
         System.out.println("HaxeLimeRenderFlash.createTexture(" + path + ")");
-        Image image = Assets.getImage(path, true);
+        Image image = Assets.getImage_s(path, true);
         BitmapData bitmapData = (BitmapData) image.src;
         int id = textureIndices.pop();
         RectangleTexture texture = context.createRectangleTexture(
@@ -184,10 +191,14 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
             int virtualWidth = this.stage.stageWidth;
             int virtualHeight = this.stage.stageHeight;
 
-            var verticesOut = new Vector<Float>(vertexCount * 6);
-            var indicesOut = new Vector<UInt>(indexCount);
-            for (n in 0 ...verticesOut.length)verticesOut[n] = _vertices[n];
-            for (n in 0 ...indicesOut.length)indicesOut[n] = _indices[n];
+            //float[] verticesOut = new Vector<Float>(vertexCount * 6);
+            //int[] indicesOut = new Vector<UInt>(indexCount);
+
+            float[] verticesOut = new float[vertexCount * 6];
+            int[] indicesOut = new int[indexCount];
+
+            for (int n = 0; n < verticesOut.length; n++) verticesOut[n] = _vertices[n];
+            for (int n = 0; n < indicesOut.length; n++) indicesOut[n] = _indices[n];
 
             VertexBuffer3D vertexBuffer = context.createVertexBuffer(verticesOut.length / 6, 6);
             IndexBuffer3D indexBuffer = context.createIndexBuffer(indicesOut.length);
