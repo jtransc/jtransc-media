@@ -1,3 +1,4 @@
+import assembler.AGALMiniAssembler;
 import flash.display.BitmapData;
 import flash.display.Sprite;
 import flash.display.Stage;
@@ -5,7 +6,6 @@ import flash.display3D.*;
 import flash.display3D.textures.RectangleTexture;
 import flash.events.Event;
 import flash.geom.Matrix3D;
-import haxe.ds.Vector;
 import jtransc.IntStack;
 import lime.Assets;
 import lime.graphics.Image;
@@ -149,7 +149,7 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
     @Override
     public int createTexture(String path, int width, int height) {
         System.out.println("HaxeLimeRenderFlash.createTexture(" + path + ")");
-        Image image = Assets.getImage_s(path, true);
+        Image image = Assets.getImage(path, true);
         BitmapData bitmapData = (BitmapData) image.src;
         int id = textureIndices.pop();
         RectangleTexture texture = context.createRectangleTexture(
