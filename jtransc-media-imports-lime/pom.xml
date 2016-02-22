@@ -61,6 +61,7 @@
                         <param>lime.utils</param>
                         <param>lime.vm</param>
                         <param>lime.tool</param>
+                        <param>haxe.io</param>
                     </includePackagesRec>
                     <target>cpp</target>
                 </configuration>

@@ -1,4 +1,4 @@
-import jtransc.IntStack;
+import jtransc.ds.IntStack;
 import lime.audio.AudioSource;
 import lime.Assets;
 

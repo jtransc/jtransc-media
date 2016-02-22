@@ -1,4 +1,6 @@
+import flash.display.Sprite;
 import lime.app.Application;
+import lime.graphics.RenderContext;
 import lime.graphics.Renderer;
 import lime.graphics.FlashRenderContext;
 import lime.graphics.GLRenderContext;
@@ -11,18 +13,15 @@ class HaxeLimeRender {
     static public void setRenderer(Renderer renderer) {
         if (HaxeLimeRender.impl != null) return;
 
-        /*
-        HaxeLimeRender.impl = switch (renderer.context) {
-            #if flash
-            case FLASH(sprite): new HaxeLimeRenderFlash(sprite);
-                #else
-            case OPENGL(gl): new HaxeLimeRenderGL(gl);
-                #end
-            default: throw 'Not supported renderer $renderer';
-        }
-        */
+        RenderContext context = renderer.context;
 
-        throw new RuntimeException("Much implement this!");
+        if (context instanceof RenderContext.FLASH) {
+            HaxeLimeRender.impl = new HaxeLimeRenderFlash((Sprite)(Object) ((RenderContext.FLASH) context).stage);
+        } else if (context instanceof RenderContext.OPENGL) {
+            HaxeLimeRender.impl = new HaxeLimeRenderGL(((RenderContext.OPENGL) context).gl);
+        } else {
+            throw new RuntimeException("Not supported renderer $renderer");
+        }
     }
 
     static public boolean isInitialized() {

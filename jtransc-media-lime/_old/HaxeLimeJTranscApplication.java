@@ -1,12 +1,10 @@
+import lime.graphics.FlashRenderContext;
+import lime.graphics.GLRenderContext;
+import lime.graphics.RenderContext;
+
 public class HaxeLimeJTranscApplication extends lime.app.Application {
     @Override
     public void onPreloadComplete() {
-        //switch (renderer.context) {
-        //	case FLASH(sprite): #if flash initializeFlash(sprite); #end
-        //	case OPENGL (gl):
-        //	default:
-        //	throw "Unsupported render context";
-        //}
     }
 
     private boolean initialized = false;

@@ -1,7 +1,7 @@
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
-import jtransc.IntStack;
+import jtransc.ds.IntStack;
 import jtransc.JTranscAudio;
 
 public class LibgdxAudio implements JTranscAudio.Impl {

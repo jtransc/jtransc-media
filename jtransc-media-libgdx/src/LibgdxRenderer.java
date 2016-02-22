@@ -1,16 +1,12 @@
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import jtransc.FastMemory;
-import jtransc.IntStack;
-import jtransc.JTranscBits;
+import jtransc.ds.IntStack;
 import jtransc.JTranscRender;
-
-import java.util.Stack;
 
 class LibgdxRenderer implements JTranscRender.Impl {
     IntStack textureIds = new IntStack(2048);
