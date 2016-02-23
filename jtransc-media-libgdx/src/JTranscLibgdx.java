@@ -40,7 +40,7 @@ public class JTranscLibgdx {
 		if (r_render != null) r_render.run();
 	}
 
-	static public void config() {
+	static public void init() {
 		JTranscEventLoop.impl = new JTranscEventLoop.Impl() {
 			@Override
 			public void init(final Runnable init) {

@@ -19,12 +19,10 @@ public class HaxeLimeLibrary {
 		JTranscEventLoop.impl = new JTranscEventLoop.Impl() {
 			@Override
 			public void init(Runnable init) {
-
 			}
 
 			@Override
 			public void loop(Runnable update, Runnable render) {
-
 			}
 		};
 	}

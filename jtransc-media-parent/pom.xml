@@ -19,16 +19,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.jtransc.media</groupId>
-    <artifactId>jtransc-media-parent</artifactId>
-    <version>0.0.5</version>
-    <packaging>pom</packaging>
-
+    <!--
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
         <version>5</version>
     </parent>
+    -->
+
+    <groupId>com.jtransc.media</groupId>
+    <artifactId>jtransc-media-parent</artifactId>
+    <version>0.0.5</version>
+    <packaging>pom</packaging>
 
     <name>jtransc media parent</name>
     <description>JVM AOT compiler currently generating Haxe, with initial focus on kotlin and games.</description>

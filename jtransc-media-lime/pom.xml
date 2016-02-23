@@ -50,11 +50,13 @@
             <groupId>com.jtransc.media</groupId>
             <artifactId>jtransc-media-imports-lime</artifactId>
             <version>${jtransc.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.jtransc.media</groupId>
             <artifactId>jtransc-media-imports-flash</artifactId>
             <version>${jtransc.version}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
