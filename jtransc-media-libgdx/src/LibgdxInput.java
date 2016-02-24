@@ -1,6 +1,6 @@
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import jtransc.JTranscInput;
+import jtransc.media.JTranscInput;
 
 public class LibgdxInput {
     static public void config() {

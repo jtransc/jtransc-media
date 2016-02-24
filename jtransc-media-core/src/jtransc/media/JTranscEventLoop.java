@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jtransc;
+package jtransc.media;
 
 public class JTranscEventLoop {
 	static public Impl impl = new Impl() {

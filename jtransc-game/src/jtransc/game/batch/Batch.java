@@ -1,6 +1,6 @@
 package jtransc.game.batch;
 
-import jtransc.JTranscRender;
+import jtransc.media.JTranscRender;
 import jtransc.game.math.Rectangle;
 
 public class Batch {

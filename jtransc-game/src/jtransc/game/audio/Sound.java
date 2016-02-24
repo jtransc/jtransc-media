@@ -1,6 +1,6 @@
 package jtransc.game.audio;
 
-import jtransc.JTranscAudio;
+import jtransc.media.JTranscAudio;
 
 /**
  * Use JTranscGame.sound() to create a sound

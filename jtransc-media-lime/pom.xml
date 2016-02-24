@@ -23,14 +23,13 @@
 
     <properties>
         <gdx.version>1.9.2</gdx.version>
-        <jtransc.version>0.0.5</jtransc.version>
     </properties>
 
     <parent>
         <groupId>com.jtransc.media</groupId>
         <artifactId>jtransc-media-parent</artifactId>
         <relativePath>../jtransc-media-parent</relativePath>
-        <version>0.0.5</version>
+        <version>0.1.0</version>
     </parent>
 
     <artifactId>jtransc-media-lime</artifactId>
@@ -46,6 +45,7 @@
             <artifactId>jtransc-media-core</artifactId>
             <version>${jtransc.version}</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.jtransc.media</groupId>
             <artifactId>jtransc-media-imports-lime</artifactId>
@@ -58,6 +58,7 @@
             <version>${jtransc.version}</version>
             <scope>compile</scope>
         </dependency>
+        -->
     </dependencies>
 
     <build>

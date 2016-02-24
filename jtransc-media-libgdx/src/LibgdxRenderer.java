@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import jtransc.FastMemory;
 import jtransc.ds.IntStack;
-import jtransc.JTranscRender;
+import jtransc.media.JTranscRender;
 
 class LibgdxRenderer implements JTranscRender.Impl {
     IntStack textureIds = new IntStack(2048);

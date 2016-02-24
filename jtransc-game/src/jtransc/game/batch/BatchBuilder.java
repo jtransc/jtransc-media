@@ -2,6 +2,7 @@ package jtransc.game.batch;
 
 import jtransc.*;
 import jtransc.game.math.Point;
+import jtransc.media.JTranscRender;
 
 public class BatchBuilder {
 	public FastMemory vertices = new FastMemory(4 * 6 * 16 * 1024);

@@ -18,9 +18,9 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import jtransc.JTranscAudio;
-import jtransc.JTranscEventLoop;
-import jtransc.JTranscRender;
+import jtransc.media.JTranscAudio;
+import jtransc.media.JTranscEventLoop;
+import jtransc.media.JTranscRender;
 import jtransc.JTranscVersion;
 
 public class JTranscLibgdx {

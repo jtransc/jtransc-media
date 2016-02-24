@@ -1,6 +1,6 @@
 package jtransc.game.canvas;
 
-import jtransc.JTranscRender;
+import jtransc.media.JTranscRender;
 
 public class BaseTexture {
 	public final int id;

@@ -4,13 +4,14 @@ import jtransc.*;
 import jtransc.game.audio.Sound;
 import jtransc.game.canvas.Canvas;
 import jtransc.game.canvas.Texture;
-import jtransc.game.event.Event;
 import jtransc.game.event.KeyEvent;
 import jtransc.game.event.MouseEvent;
 import jtransc.game.math.Point;
 import jtransc.game.stage.Sprite;
 import jtransc.game.stage.Stage;
 import jtransc.game.ui.Keys;
+import jtransc.media.JTranscEventLoop;
+import jtransc.media.JTranscInput;
 
 public class JTranscGame {
 	public final Canvas canvas;

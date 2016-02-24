@@ -1,6 +1,6 @@
 package jtransc.game.canvas;
 
-import jtransc.JTranscRender;
+import jtransc.media.JTranscRender;
 import jtransc.game.batch.BatchBuilder;
 
 public class Canvas {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jtransc;
+package jtransc.media;
 
 import jtransc.annotation.JTranscKeep;
 

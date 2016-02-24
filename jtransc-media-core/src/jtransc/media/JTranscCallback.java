@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jtransc;
+package jtransc.media;
 
 public interface JTranscCallback<T> {
 	void handler(Throwable error, T data);

@@ -1,6 +1,0 @@
-public class HaxeLimeMain extends lime.app.Application {
-    public function new() {
-        super();
-        ##MAIN##
-    }
-}

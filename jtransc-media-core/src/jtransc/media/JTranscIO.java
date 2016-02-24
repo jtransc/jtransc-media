@@ -14,23 +14,34 @@
  * limitations under the License.
  */
 
-package jtransc;
+package jtransc.media;
 
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
 public class JTranscIO {
-	static public void readAsync(String path, JTranscCallback<byte[]> handler) {
-		try {
-			File file = new File(path);
-			byte[] fileData = new byte[(int) file.length()];
-			DataInputStream dis = new DataInputStream(new FileInputStream(file));
-			dis.readFully(fileData);
-			dis.close();
-			handler.handler(null, fileData);
-		} catch (Throwable t) {
-			handler.handler(t, null);
+	static public Impl impl = new Impl() {
+		@Override
+		public void readAsync(String path, JTranscCallback<byte[]> handler) {
+			try {
+				File file = new File(path);
+				byte[] fileData = new byte[(int) file.length()];
+				DataInputStream dis = new DataInputStream(new FileInputStream(file));
+				dis.readFully(fileData);
+				dis.close();
+				handler.handler(null, fileData);
+			} catch (Throwable t) {
+				handler.handler(t, null);
+			}
 		}
+	};
+
+	static public void readAsync(String path, JTranscCallback<byte[]> handler) {
+		impl.readAsync(path, handler);
+	}
+
+	public interface Impl {
+		void readAsync(String path, JTranscCallback<byte[]> handler);
 	}
 }
