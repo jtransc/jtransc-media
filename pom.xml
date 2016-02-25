@@ -32,12 +32,13 @@
     <modules>
         <module>jtransc-media-parent</module>
         <module>jtransc-media-core</module>
-        <!--
-        <module>jtransc-media-imports-flash</module>
-        <module>jtransc-media-imports-lime</module>
-        -->
         <module>jtransc-media-libgdx</module>
         <module>jtransc-media-lime</module>
         <module>jtransc-game</module>
+        <!--
+        <module>jtransc-media-imports-flash</module>
+        <module>jtransc-media-imports-lime</module>
+        <module>jtransc-media-libgdx-lime-backend</module>
+        -->
     </modules>
 </project>

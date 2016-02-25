@@ -48,6 +48,8 @@
                     <target>swf</target>
                     <includePackagesRec>
                         <param>flash.system</param>
+                        <param>flash.display3D</param>
+                        <param>flash.display</param>
                     </includePackagesRec>
                 </configuration>
                 <executions>
