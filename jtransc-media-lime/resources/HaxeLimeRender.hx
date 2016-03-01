@@ -34,6 +34,10 @@ class HaxeLimeRender {
         return impl.createTexture(path, width, height);
     }
 
+    static public function createTextureMemory(data:haxe.io.Int32Array, width:Int, height:Int, format:Int):Int {
+        return impl.createTextureMemory(data, width, height, format);
+    }
+
     static public function disposeTexture(id:Int):Void {
         return impl.disposeTexture(id);
     }

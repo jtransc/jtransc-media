@@ -14,6 +14,10 @@ class HaxeLimeRenderImpl {
         return -1;
     }
 
+    public function createTextureMemory(data:haxe.io.Int32Array, width:Int, height:Int, format:Int):Int {
+        return -1;
+    }
+
     public function isInitialized():Bool {
         return true;
     }

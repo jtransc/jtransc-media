@@ -52,6 +52,8 @@ public class JTranscLime {
         native public int createTexture(String path, int width, int height);
 
         @Override
+        // haxe.io.Int32Array
+        @HaxeMethodBody("return HaxeLimeRender.createTextureMemory(p0.data, p1, p2, p3);")
         native public int createTextureMemory(int[] data, int width, int height, int format);
 
         @Override

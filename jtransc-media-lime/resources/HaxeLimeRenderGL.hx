@@ -23,8 +23,6 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
     private var indicesBuffer:GLBuffer = null;
     private var verticesBuffer:GLBuffer = null;
 
-    var ENABLE_COLORS = false;
-
     public function new(gl:GLRenderContext) {
         this.gl = gl;
 
@@ -49,55 +47,41 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
 
         ";
 
-        if (ENABLE_COLORS) {
-            PREFIX += "#define A_COLORS 1\n";
-        }
-
         var vertexSource = PREFIX + "
         	uniform mat4 u_matrix;
 
         	attribute vec2 a_position;
         	attribute vec2 a_texcoord;
-        	#ifdef A_COLORS
-                attribute vec4 a_color;
-                attribute vec4 a_colorOffset;
-            #endif
+            attribute vec4 a_color;
+            attribute vec4 a_colorOffset;
 
         	varying MED vec2 v_texcoord;
-        	#ifdef A_COLORS
-                varying MED vec4 v_color;
-                varying MED vec4 v_colorOffset;
-            #endif
+            varying MED vec4 v_color;
+            varying MED vec4 v_colorOffset;
 
         	void main() {
                 gl_Position = u_matrix * vec4(a_position, 0, 1);
                 v_texcoord = a_texcoord;
-                #ifdef A_COLORS
-                    v_color = a_color;
-                    v_colorOffset = (a_colorOffset - vec4(0.5, 0.5, 0.5, 0.5)) * 2.0;
-                #endif
+                v_color = a_color;
+                v_colorOffset = (a_colorOffset - vec4(0.5, 0.5, 0.5, 0.5)) * 2.0;
         	}
         ";
 
         var fragmentSource = PREFIX + "
 				uniform sampler2D u_sampler;
 
-                #ifdef A_COLORS
-                    varying MED vec4 v_color;
-                    varying MED vec4 v_colorOffset;
-                #endif
+                varying MED vec4 v_color;
+                varying MED vec4 v_colorOffset;
 
 				varying MED vec2 v_texcoord;
 
 				void main() {
                     gl_FragColor = texture2D(u_sampler, v_texcoord.st);
                     if (gl_FragColor.a <= 0.0) discard;
-                    #ifdef A_COLORS
-                        gl_FragColor.rgb /= gl_FragColor.a;
-                        gl_FragColor *= v_color;
-                        gl_FragColor += v_colorOffset;
-                        gl_FragColor.rgb *= gl_FragColor.a;
-                    #endif
+                    gl_FragColor.rgb /= gl_FragColor.a;
+                    gl_FragColor *= v_color;
+                    gl_FragColor += v_colorOffset;
+                    gl_FragColor.rgb *= gl_FragColor.a;
                     if (gl_FragColor.a <= 0.0) discard;
 				}
         ";
@@ -124,24 +108,32 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         trace('HaxeLimeRenderGL.createTexture($path)');
         //path = 'assets/image.png';
         //trace('HaxeLimeRenderGL.createTexture[2]($path)');
-        var image = Assets.getImage(path);
+        return this._createTexture(Assets.getImage(path));
+    }
+
+    private function _createTexture(image:lime.graphics.Image) {
         var id = textureIndices.pop();
         var glTexture = textures[id] = gl.createTexture();
 
         gl.bindTexture(gl.TEXTURE_2D, glTexture);
+        
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        #if js
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image.src);
-        #else
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.buffer.width, image.buffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image.data);
-        #end
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.buffer.width, image.buffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image.data);
+
         gl.bindTexture(gl.TEXTURE_2D, null);
 
-
         return id;
+    }
+
+    override public function createTextureMemory(data:haxe.io.Int32Array, width:Int, height:Int, format:Int):Int {
+        trace('HaxeLimeRenderGL.createTextureMemory($width, $height)');
+        var bytes = lime.utils.UInt8Array.fromBytes(data.view.buffer);
+        var buffer = new lime.graphics.ImageBuffer(bytes, width, height);
+        //trace(buffer);
+        return this._createTexture(new lime.graphics.Image(buffer, 0, 0, width, height));
     }
 
     override public function disposeTexture(id:Int) {
@@ -181,19 +173,15 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
 
         gl.enableVertexAttribArray(glVertexAttribute);
         gl.enableVertexAttribArray(glTextureAttribute);
-        if (ENABLE_COLORS) {
-            gl.enableVertexAttribArray(glColor0Attribute);
-            gl.enableVertexAttribArray(glColor1Attribute);
-        }
+        gl.enableVertexAttribArray(glColor0Attribute);
+        gl.enableVertexAttribArray(glColor1Attribute);
 
         var STRIDE = 6 * 4;
         gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
         gl.vertexAttribPointer(glVertexAttribute , 2, gl.FLOAT, false, STRIDE, 0 * 4);
         gl.vertexAttribPointer(glTextureAttribute, 2, gl.FLOAT, false, STRIDE, 2 * 4);
-        if (ENABLE_COLORS) {
-            gl.vertexAttribPointer(glColor0Attribute , 4, gl.UNSIGNED_BYTE, false, STRIDE, 4 * 4);
-            gl.vertexAttribPointer(glColor1Attribute , 4, gl.UNSIGNED_BYTE, false, STRIDE, 5 * 4);
-        }
+        gl.vertexAttribPointer(glColor0Attribute , 4, gl.UNSIGNED_BYTE, true, STRIDE, 4 * 4);
+        gl.vertexAttribPointer(glColor1Attribute , 4, gl.UNSIGNED_BYTE, true, STRIDE, 5 * 4);
 
         gl.enable(gl.BLEND);
         #if desktop gl.enable(gl.TEXTURE_2D); #end
