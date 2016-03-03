@@ -16,11 +16,11 @@
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import jtransc.media.JTranscAudio;
-import jtransc.media.JTranscEventLoop;
-import jtransc.media.JTranscRender;
+import com.badlogic.gdx.files.FileHandle;
+import jtransc.media.*;
 import jtransc.JTranscVersion;
 
 public class JTranscLibgdx {
@@ -41,6 +41,14 @@ public class JTranscLibgdx {
 	}
 
 	static public void init() {
+		JTranscIO.impl = new JTranscIO.Impl() {
+			@Override
+			public void readAsync(String path, JTranscCallback<byte[]> handler) {
+				byte[] bytes = Gdx.files.internal(path).readBytes();
+				handler.handler(null, bytes);
+			}
+		};
+
 		JTranscEventLoop.impl = new JTranscEventLoop.Impl() {
 			@Override
 			public void init(final Runnable init) {
