@@ -8,6 +8,7 @@ import jtransc.media.*;
 
 @HaxeAddFiles({
         "AGALMiniAssembler.hx",
+		"HaxeLimeAssets.hx",
         "HaxeLimeAudio.hx",
         "HaxeLimeJTranscApplication.hx",
         "HaxeLimeRender.hx",
@@ -85,7 +86,7 @@ public class JTranscLime {
     static private class JTranscIOLimeImpl implements JTranscIO.Impl {
         @Override
         @HaxeMethodBody(
-                "var bytes = lime.Assets.getBytes(p0._str); // LIME >= 2.8\n" +
+                "var bytes = HaxeLimeAssets.getBytes(p0._str); // LIME >= 2.8\n" +
                         "p1.handler_Ljava_lang_Throwable_Ljava_lang_Object__V(null, HaxeByteArray.fromBytes(bytes));\n"
         )
         native public void readAsync(String path, JTranscCallback<byte[]> handler);
@@ -94,11 +95,12 @@ public class JTranscLime {
     static private class JTranscSyncIOLimeImpl implements JTranscSyncIO.Impl {
         @Override
         public JTranscSyncIO.ImplStream open(String path) {
-            return _open("assets/" + path);
+            //return _open("assets/" + path);
+			return _open(path);
         }
 
         @HaxeMethodBody(
-                "var bytes = lime.Assets.getBytes(p0._str); // LIME >= 2.8\n" +
+                "var bytes = HaxeLimeAssets.getBytes(p0._str); // LIME >= 2.8\n" +
                         "if (bytes == null) return null;\n" +
                         "var obj = new jtransc.io.JTranscSyncIO_ByteStream_();\n" +
                         "obj._init___B_V(HaxeByteArray.fromBytes(bytes));\n" +

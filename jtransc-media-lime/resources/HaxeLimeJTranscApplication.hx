@@ -58,18 +58,21 @@ class HaxeLimeJTranscApplication extends lime.app.Application {
 
 class JTranscModule extends lime.app.Module {
     override public function onMouseUp (window:lime.ui.Window, x:Float, y:Float, button:Int):Void {
+		JTranscInput_.__hx_static__init__();
         JTranscInput_.mouseInfo.x = Std.int(x);
         JTranscInput_.mouseInfo.y = Std.int(y);
         JTranscInput_.mouseInfo.buttons &= ~(1 << button);
         JTranscInput_.impl.onMouseUp_Ljtransc_media_JTranscInput_MouseInfo__V(JTranscInput_.mouseInfo);
     }
     override public function onMouseDown (window:lime.ui.Window, x:Float, y:Float, button:Int):Void {
+		JTranscInput_.__hx_static__init__();
         JTranscInput_.mouseInfo.x = Std.int(x);
         JTranscInput_.mouseInfo.y = Std.int(y);
         JTranscInput_.mouseInfo.buttons |= 1 << button;
         JTranscInput_.impl.onMouseDown_Ljtransc_media_JTranscInput_MouseInfo__V(JTranscInput_.mouseInfo);
     }
     override public function onMouseMove (window:lime.ui.Window, x:Float, y:Float):Void {
+		JTranscInput_.__hx_static__init__();
         JTranscInput_.mouseInfo.x = Std.int(x);
         JTranscInput_.mouseInfo.y = Std.int(y);
         JTranscInput_.impl.onMouseMove_Ljtransc_media_JTranscInput_MouseInfo__V(JTranscInput_.mouseInfo);

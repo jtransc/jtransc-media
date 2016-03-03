@@ -1,5 +1,4 @@
 import lime.audio.AudioSource;
-import lime.Assets;
 
 class HaxeLimeAudio {
     private var ids:Array<Int>;
@@ -21,7 +20,7 @@ class HaxeLimeAudio {
     static public function createSound(path:String) {
         var instance = getInstance();
         var soundId = instance.ids.pop();
-        instance.sources[soundId] = new AudioSource(Assets.getAudioBuffer(path));
+        instance.sources[soundId] = new AudioSource(HaxeLimeAssets.getAudioBuffer(path));
         return soundId;
     }
 

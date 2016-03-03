@@ -124,7 +124,7 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 
     override public function createTexture(path:String, width:Int, height:Int):Int {
         trace('HaxeLimeRenderFlash.createTexture($path)');
-        var image = Assets.getImage(path);
+        var image = HaxeLimeAssets.getImage(path);
         var bitmapData = image.src;
         var id = textureIndices.pop();
         var texture = context.createRectangleTexture(

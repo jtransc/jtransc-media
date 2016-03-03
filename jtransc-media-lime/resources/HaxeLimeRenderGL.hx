@@ -3,7 +3,6 @@ import lime.graphics.Renderer;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.*;
 import lime.utils.*;
-import lime.Assets;
 import lime.math.Matrix4;
 
 class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
@@ -108,7 +107,7 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         trace('HaxeLimeRenderGL.createTexture($path)');
         //path = 'assets/image.png';
         //trace('HaxeLimeRenderGL.createTexture[2]($path)');
-        return this._createTexture(Assets.getImage(path));
+        return this._createTexture(HaxeLimeAssets.getImage(path));
     }
 
     private function _createTexture(image:lime.graphics.Image) {
