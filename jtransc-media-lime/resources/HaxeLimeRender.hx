@@ -25,11 +25,6 @@ class HaxeLimeRender {
         return HaxeLimeRender.impl.isInitialized();
     }
 
-    static public function setSize(width:Int, height:Int) {
-        HaxeLimeRender.width = width;
-        HaxeLimeRender.height = height;
-    }
-
     static public function createTexture(path:String, width:Int, height:Int):Int {
         return impl.createTexture(path, width, height);
     }
@@ -42,13 +37,16 @@ class HaxeLimeRender {
         return impl.disposeTexture(id);
     }
 
+	static public function setDisplayInfo(screenWidth:Float, screenHeight:Float, virtualWidth:Float, virtualHeight:Float, virtualActualWidth:Float, virtualActualHeight:Float, virtualScaleX:Float, virtualScaleY:Float) {
+		impl.setDisplayInfo(screenWidth, screenHeight, virtualWidth, virtualHeight, virtualActualWidth, virtualActualHeight, virtualScaleX, virtualScaleY);
+	}
+
     static public function render(
         _vertices:haxe.io.Float32Array, vertexCount:Int,
         _indices:haxe.io.UInt16Array, indexCount:Int,
         _batches:haxe.io.Int32Array, batchCount:Int
     ):Void {
         return impl.render(
-            width, height,
             _vertices, vertexCount,
             _indices, indexCount,
             _batches, batchCount

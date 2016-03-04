@@ -10,6 +10,7 @@ class HaxeLimeAssets {
 		return 'assets/' + pathWithoutAssetsFolder;
 	}
 
+	// Synchronous!
 	static public function getBytes(path:String) {
 		return lime.Assets.getBytes(fixpath(path));
 	}

@@ -143,7 +143,6 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
     }
 
     override public function render(
-        width:Int, height:Int,
         _vertices:haxe.io.Float32Array, vertexCount:Int,
         _indices:haxe.io.UInt16Array, indexCount:Int,
         _batches:haxe.io.Int32Array, batchCount:Int
@@ -153,14 +152,14 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         var verticesData = lime.utils.Float32Array.fromBytes(_vertices.view.buffer, 0, vertexCount * 6);
 
         gl.enable(gl.BLEND);
-        gl.viewport(0, 0, width, height);
+        gl.viewport(0, 0, Std.int(this.screenWidth), Std.int(this.screenHeight));
 
         gl.clearColor(0.2, 0.2, 0.2, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         gl.useProgram(glProgram);
 
-        var matrix = Matrix4.createOrtho(0, width, height, 0, -1000, 1000);
+        var matrix = Matrix4.createOrtho(0, virtualActualWidth, virtualActualHeight, 0, -1000, 1000);
         gl.uniformMatrix4fv(glMatrixUniform, false, matrix);
         gl.uniform1i(glImageUniform, 0);
 

@@ -98,7 +98,7 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
     ]).toData();
 
     static private var _map3dRaw = new Vector<Float>(16);
-    static public function createOrtho(left:Float, right:Float, bottom:Float, top:Float, near:Float = -1, far:Float = 1, target:Matrix3D = null):Matrix3D {
+    static public function createOrtho(left:Float, right:Float, bottom:Float, top:Float, near:Float = -1.0, far:Float = 1.0, target:Matrix3D = null):Matrix3D {
         var v = _map3dRaw;
         if (target == null) target = new Matrix3D();
         var a = 2.0 / (right - left);
@@ -147,7 +147,6 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
     private var _projectionMatrix = new Matrix3D();
 
     override public function render(
-        width:Int, height:Int,
         _vertices:haxe.io.Float32Array, vertexCount:Int,
         _indices:haxe.io.UInt16Array, indexCount:Int,
         _batches:haxe.io.Int32Array, batchCount:Int
@@ -161,9 +160,6 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
         context.clear(0.2, 0.2, 0.2, 1);
 
         if (batchCount > 0) {
-            var virtualWidth = this.stage.stageWidth;
-            var virtualHeight = this.stage.stageHeight;
-
             var verticesOut = new Vector<Float>(vertexCount * 6);
             var indicesOut = new Vector<UInt>(indexCount);
             for (n in 0 ... verticesOut.length) verticesOut[n] = _vertices[n];
@@ -178,7 +174,7 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
             context.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
             context.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_2);
 
-            createOrtho(0, virtualWidth, virtualHeight, 0, -1, 1, _projectionMatrix);
+            createOrtho(0, virtualActualWidth, virtualActualHeight, 0, -1, 1, _projectionMatrix);
             context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, _projectionMatrix);
             context.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 4, VERTEX_CONSTANTS);
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, FRAGMENT_CONSTANTS);

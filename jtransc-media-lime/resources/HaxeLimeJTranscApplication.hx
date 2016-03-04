@@ -32,7 +32,7 @@ class HaxeLimeJTranscApplication extends lime.app.Application {
             initializedRenderer = true;
             HaxeLimeRender.setRenderer(renderer);
         }
-        HaxeLimeRender.setSize(window.width, window.height);
+		jtransc.media.JTranscWindow_.dispatchResized_II_V(window.width, window.height);
         if (HaxeLimeRender.isInitialized()) {
             if (!initialized && HaxeLimeJTranscApplication.initHandler != null) {
                 initialized = true;
@@ -41,6 +41,10 @@ class HaxeLimeJTranscApplication extends lime.app.Application {
             if (HaxeLimeJTranscApplication.renderHandler != null) HaxeLimeJTranscApplication.renderHandler();
         }
     }
+
+	public override function onWindowResize(window:lime.ui.Window, width:Int, height:Int):Void {
+		jtransc.media.JTranscWindow_.dispatchResized_II_V(width, height);
+	}
 
     public override function update(deltaTime:Int) {
         super.update(deltaTime);
@@ -52,29 +56,37 @@ class HaxeLimeJTranscApplication extends lime.app.Application {
     public function new() {
         super();
         HaxeLimeJTranscApplication.instance = this;
+		JTranscInput_.__hx_static__init__();
         addModule(new JTranscModule());
     }
 }
 
 class JTranscModule extends lime.app.Module {
     override public function onMouseUp (window:lime.ui.Window, x:Float, y:Float, button:Int):Void {
-		JTranscInput_.__hx_static__init__();
         JTranscInput_.mouseInfo.x = Std.int(x);
         JTranscInput_.mouseInfo.y = Std.int(y);
         JTranscInput_.mouseInfo.buttons &= ~(1 << button);
         JTranscInput_.impl.onMouseUp_Ljtransc_media_JTranscInput_MouseInfo__V(JTranscInput_.mouseInfo);
     }
     override public function onMouseDown (window:lime.ui.Window, x:Float, y:Float, button:Int):Void {
-		JTranscInput_.__hx_static__init__();
         JTranscInput_.mouseInfo.x = Std.int(x);
         JTranscInput_.mouseInfo.y = Std.int(y);
         JTranscInput_.mouseInfo.buttons |= 1 << button;
         JTranscInput_.impl.onMouseDown_Ljtransc_media_JTranscInput_MouseInfo__V(JTranscInput_.mouseInfo);
     }
     override public function onMouseMove (window:lime.ui.Window, x:Float, y:Float):Void {
-		JTranscInput_.__hx_static__init__();
         JTranscInput_.mouseInfo.x = Std.int(x);
         JTranscInput_.mouseInfo.y = Std.int(y);
         JTranscInput_.impl.onMouseMove_Ljtransc_media_JTranscInput_MouseInfo__V(JTranscInput_.mouseInfo);
     }
+
+	override public function onKeyDown(window:lime.ui.Window, keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {
+		JTranscInput_.keyInfo.keyCode = keyCode;
+		JTranscInput_.impl.onKeyDown_Ljtransc_media_JTranscInput_KeyInfo__V(JTranscInput_.keyInfo);
+	}
+
+	override public function onKeyUp(window:lime.ui.Window, keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {
+		JTranscInput_.keyInfo.keyCode = keyCode;
+		JTranscInput_.impl.onKeyUp_Ljtransc_media_JTranscInput_KeyInfo__V(JTranscInput_.keyInfo);
+	}
 }

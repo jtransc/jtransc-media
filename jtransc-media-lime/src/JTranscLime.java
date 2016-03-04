@@ -65,8 +65,8 @@ public class JTranscLime {
         native public void disposeTexture(int textureId);
 
 		@Override
-		public void setDisplayInfo(double screenWidth, double screenHeight, double virtualWidth, double virtualHeight, double virtualActualWidth, double virtualActualHeight, double virtualScaleX, double virtualScaleY) {
-		}
+		@HaxeMethodBody("HaxeLimeRender.setDisplayInfo(p0, p1, p2, p3, p4, p5, p6, p7);")
+		native public void setDisplayInfo(double screenWidth, double screenHeight, double virtualWidth, double virtualHeight, double virtualActualWidth, double virtualActualHeight, double virtualScaleX, double virtualScaleY);
 
 		@Override
         @HaxeMethodBody("HaxeLimeRender.render(p0.floatData, p1, p2.data, p3, p4.data, p5);")
