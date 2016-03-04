@@ -20,7 +20,7 @@ import jtransc.annotation.JTranscKeep;
 
 import java.util.ArrayList;
 
-public class JTranscInput {
+public final class JTranscInput {
 	@JTranscKeep
 	static public ListHandler impl = new ListHandler();
 	@JTranscKeep
@@ -44,6 +44,11 @@ public class JTranscInput {
 		public int x;
 		public int y;
 		public int buttons;
+
+		public void setScreenXY(int screenX, int screenY) {
+			this.x = (int) (screenX / JTranscWindow.getVirtualScaleX());
+			this.y = (int) (screenY / JTranscWindow.getVirtualScaleY());
+		}
 	}
 
 	@JTranscKeep

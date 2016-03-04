@@ -40,6 +40,10 @@ public class JTranscLibgdx {
 		if (r_render != null) r_render.run();
 	}
 
+	static private void updatedScreenSize() {
+		JTranscWindow.setScreenSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+	}
+
 	static public void init() {
 		JTranscIO.impl = new JTranscIO.Impl() {
 			@Override
@@ -60,6 +64,7 @@ public class JTranscLibgdx {
 					@Override
 					public void create() {
 						JTranscLibgdx.init(init);
+						JTranscLibgdx.updatedScreenSize();
 					}
 
 					@Override
@@ -69,11 +74,10 @@ public class JTranscLibgdx {
 
 					@Override
 					public void resize(int width, int height) {
-						JTranscWindow.dispatchResized(width, height);
+						//JTranscWindow.setScreenSize(width, height);
+						JTranscLibgdx.updatedScreenSize();
 					}
 				};
-
-				JTranscWindow.dispatchResized(width, height);
 
 				//app = initLwjgl3(width, height, title, applicationAdapter);
 				app = initLwjgl2(width, height, title, applicationAdapter);

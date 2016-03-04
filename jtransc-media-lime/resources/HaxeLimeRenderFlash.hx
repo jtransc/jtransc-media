@@ -174,7 +174,7 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
             context.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
             context.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_2);
 
-            createOrtho(0, virtualActualWidth, virtualActualHeight, 0, -1, 1, _projectionMatrix);
+            createOrtho(0, getVirtualActualWidth(), getVirtualActualHeight(), 0, -1, 1, _projectionMatrix);
             context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, _projectionMatrix);
             context.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 4, VERTEX_CONSTANTS);
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, FRAGMENT_CONSTANTS);

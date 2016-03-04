@@ -16,7 +16,7 @@
 
 package jtransc.media;
 
-public class JTranscEventLoop {
+public final class JTranscEventLoop {
 	static public Impl impl = new Impl() {
 		@Override
 		public void init(Runnable init) {

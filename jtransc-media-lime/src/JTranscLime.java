@@ -35,6 +35,7 @@ public class JTranscLime {
         JTranscIO.impl = new JTranscIOLimeImpl();
         JTranscEventLoop.impl = new JTranscEventLoopLimeImpl();
         JTranscSyncIO.impl = new JTranscSyncIOLimeImpl();
+        JTranscWindow.referenced();
     }
 
     static private class JTranscEventLoopLimeImpl implements JTranscEventLoop.Impl {
@@ -63,10 +64,6 @@ public class JTranscLime {
         @Override
         @HaxeMethodBody("HaxeLimeRender.disposeTexture(p0);")
         native public void disposeTexture(int textureId);
-
-		@Override
-		@HaxeMethodBody("HaxeLimeRender.setDisplayInfo(p0, p1, p2, p3, p4, p5, p6, p7);")
-		native public void setDisplayInfo(double screenWidth, double screenHeight, double virtualWidth, double virtualHeight, double virtualActualWidth, double virtualActualHeight, double virtualScaleX, double virtualScaleY);
 
 		@Override
         @HaxeMethodBody("HaxeLimeRender.render(p0.floatData, p1, p2.data, p3, p4.data, p5);")

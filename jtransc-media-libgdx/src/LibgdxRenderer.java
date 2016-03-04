@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import jtransc.FastMemory;
 import jtransc.ds.IntStack;
 import jtransc.media.JTranscRender;
+import jtransc.media.JTranscWindow;
 
 import java.util.Objects;
 
@@ -137,29 +138,6 @@ class LibgdxRenderer implements JTranscRender.Impl {
 
 	Matrix4 projection = new Matrix4();
 
-	double screenWidth = 640;
-	double screenHeight = 480;
-	double virtualWidth = 640;
-	double virtualHeight = 480;
-	double virtualActualWidth = 640;
-	double virtualActualHeight = 480;
-	double virtualScaleX = 1;
-	double virtualScaleY = 1;
-	//int virtualActualWidth = Gdx.graphics.getWidth();
-	//int virtualActualHeight = Gdx.graphics.getHeight();
-
-	@Override
-	public void setDisplayInfo(double screenWidth, double screenHeight, double virtualWidth, double virtualHeight, double virtualActualWidth, double virtualActualHeight, double virtualScaleX, double virtualScaleY) {
-		this.screenWidth = screenWidth;
-		this.screenHeight = screenHeight;
-		this.virtualWidth = virtualWidth;
-		this.virtualHeight = virtualHeight;
-		this.virtualActualWidth = virtualActualWidth;
-		this.virtualActualHeight = virtualActualHeight;
-		this.virtualScaleX = virtualScaleX;
-		this.virtualScaleY = virtualScaleY;
-	}
-
 	Rectangle lastClip = new Rectangle();
 	Rectangle currentScissors = new Rectangle();
 
@@ -191,6 +169,12 @@ class LibgdxRenderer implements JTranscRender.Impl {
 			new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, "a_colorOffset")
 		);
 
+		double screenWidth = JTranscWindow.getScreenWidth();
+		double screenHeight = JTranscWindow.getScreenHeight();
+		double virtualActualWidth = JTranscWindow.getVirtualActualWidth();
+		double virtualActualHeight = JTranscWindow.getVirtualActualHeight();
+		double virtualScaleX = JTranscWindow.getVirtualScaleX();
+		double virtualScaleY = JTranscWindow.getVirtualScaleY();
 
 		projection.setToOrtho(0f, (float) virtualActualWidth, (float) virtualActualHeight, 0f, 0f, 1f);
 

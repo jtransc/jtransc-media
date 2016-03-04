@@ -152,14 +152,14 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         var verticesData = lime.utils.Float32Array.fromBytes(_vertices.view.buffer, 0, vertexCount * 6);
 
         gl.enable(gl.BLEND);
-        gl.viewport(0, 0, Std.int(this.screenWidth), Std.int(this.screenHeight));
+        gl.viewport(0, 0, Std.int(this.getScreenWidth()), Std.int(this.getScreenHeight()));
 
         gl.clearColor(0.2, 0.2, 0.2, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         gl.useProgram(glProgram);
 
-        var matrix = Matrix4.createOrtho(0, virtualActualWidth, virtualActualHeight, 0, -1000, 1000);
+        var matrix = Matrix4.createOrtho(0, getVirtualActualWidth(), getVirtualActualHeight(), 0, -1000, 1000);
         gl.uniformMatrix4fv(glMatrixUniform, false, matrix);
         gl.uniform1i(glImageUniform, 0);
 

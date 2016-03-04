@@ -1,6 +1,8 @@
 package jtransc.game;
 
-import jtransc.*;
+import jtransc.JTranscEndian;
+import jtransc.JTranscSystem;
+import jtransc.JTranscVersion;
 import jtransc.game.audio.Sound;
 import jtransc.game.canvas.Canvas;
 import jtransc.game.canvas.Texture;
@@ -12,6 +14,7 @@ import jtransc.game.stage.Stage;
 import jtransc.game.ui.Keys;
 import jtransc.media.JTranscEventLoop;
 import jtransc.media.JTranscInput;
+import jtransc.media.JTranscWindow;
 
 public class JTranscGame {
 	public final Canvas canvas;
@@ -19,18 +22,18 @@ public class JTranscGame {
 	public final Sprite root;
 
 	private int lastTime = -1;
-    final public Point mouse = new Point(-1000, -1000);
-    public int mouseButtons = 0;
+	final public Point mouse = new Point(-1000, -1000);
+	public int mouseButtons = 0;
 
-    private boolean[] pressingKeys = new boolean[Keys.MAX];
+	private boolean[] pressingKeys = new boolean[Keys.MAX];
 
-    static public JTranscGame instance;
+	static public JTranscGame instance;
 
 	public JTranscGame(Canvas canvas, Stage stage) {
 		this.canvas = canvas;
 		this.stage = stage;
 		this.root = stage.root;
-        JTranscGame.instance = this;
+		JTranscGame.instance = this;
 	}
 
 	public Sound sound(String path) {
@@ -41,29 +44,33 @@ public class JTranscGame {
 		return canvas.image(path, width, height);
 	}
 
-    public boolean isPressing(int keyCode) {
-        return pressingKeys[keyCode];
-    }
+	public boolean isPressing(int keyCode) {
+		return pressingKeys[keyCode];
+	}
 
-    public interface Handler {
+	public interface Handler {
 		void init(JTranscGame game);
 	}
 
-	static public void init(final Handler entry) {
+	static public void setVirtualSize(int virtualWidth, int virtualHeight) {
+		JTranscWindow.setVirtualSize(virtualWidth, virtualHeight);
+	}
+
+	static public void init(int virtualWidth, int virtualHeight, final Handler entry) {
 		final Canvas canvas = new Canvas();
+		JTranscWindow.setVirtualSize(virtualWidth, virtualHeight);
 		JTranscEventLoop.init(new Runnable() {
 			@Override
 			public void run() {
 				System.out.println("JTranscGame.Init");
 				System.out.println("JTransc version:" + JTranscVersion.getVersion());
-				System.out.println("Endian isLittleEndian:" + JTranscEndian.isLittleEndian());
-				System.out.println("Endian isBigEndian:" + JTranscEndian.isBigEndian());
+				System.out.println("Endian isLittleEndian,isBigEndian:" + JTranscEndian.isLittleEndian() + ", " + JTranscEndian.isBigEndian());
 
 				final Stage stage = new Stage();
 				final JTranscGame game = new JTranscGame(canvas, stage);
 
 				entry.init(game);
-                game.registerEvents();
+				game.registerEvents();
 
 				JTranscEventLoop.loop(new Runnable() {
 					@Override
@@ -84,83 +91,84 @@ public class JTranscGame {
 		});
 	}
 
-    private void registerEvents() {
-        final JTranscGame game = this;
+	private void registerEvents() {
+		final JTranscGame game = this;
 
-        final KeyEvent keyEvent = new KeyEvent();
+		final KeyEvent keyEvent = new KeyEvent();
 
-        JTranscInput.addHandler(new JTranscInput.Handler() {
-            @Override
-            public void onKeyTyped(JTranscInput.KeyInfo info) {
-            }
+		JTranscInput.addHandler(new JTranscInput.Handler() {
+			@Override
+			public void onKeyTyped(JTranscInput.KeyInfo info) {
+			}
 
-            @Override
-            public void onKeyDown(JTranscInput.KeyInfo info) {
-                keyEvent.type = KeyEvent.Type.DOWN;
-                keyEvent.keyCode = info.keyCode;
-                stage.root.dispatchEvent(keyEvent);
-                game.pressingKeys[info.keyCode] = true;
-            }
+			@Override
+			public void onKeyDown(JTranscInput.KeyInfo info) {
+				_onKeyDownUp(info, true);
+			}
 
-            @Override
-            public void onKeyUp(JTranscInput.KeyInfo info) {
-                keyEvent.type = KeyEvent.Type.UP;
-                keyEvent.keyCode = info.keyCode;
-                stage.root.dispatchEvent(keyEvent);
-                game.pressingKeys[info.keyCode] = false;
-            }
+			@Override
+			public void onKeyUp(JTranscInput.KeyInfo info) {
+				_onKeyDownUp(info, false);
+			}
 
-            @Override
-            public void onGamepadPressed(JTranscInput.GamepadInfo info) {
-            }
+			private void _onKeyDownUp(JTranscInput.KeyInfo info, boolean down) {
+				keyEvent.type = down ? KeyEvent.Type.DOWN : KeyEvent.Type.UP;
+				keyEvent.keyCode = info.keyCode;
+				stage.root.dispatchEvent(keyEvent);
+				game.pressingKeys[info.keyCode & 0x1FF] = true;
+			}
 
-            @Override
-            public void onGamepadRelepased(JTranscInput.GamepadInfo info) {
-            }
+			@Override
+			public void onGamepadPressed(JTranscInput.GamepadInfo info) {
+			}
 
-            @Override
-            public void onMouseDown(JTranscInput.MouseInfo info) {
-                game.setMouseInfo(info);
-            }
+			@Override
+			public void onGamepadRelepased(JTranscInput.GamepadInfo info) {
+			}
 
-            @Override
-            public void onMouseUp(JTranscInput.MouseInfo info) {
-                game.setMouseInfo(info);
-            }
+			@Override
+			public void onMouseDown(JTranscInput.MouseInfo info) {
+				game.setMouseInfo(info);
+			}
 
-            @Override
-            public void onMouseMove(JTranscInput.MouseInfo info) {
-                game.setMouseInfo(info);
-            }
+			@Override
+			public void onMouseUp(JTranscInput.MouseInfo info) {
+				game.setMouseInfo(info);
+			}
 
-            @Override
-            public void onMouseScroll(JTranscInput.MouseInfo info) {
-                game.setMouseInfo(info);
-            }
+			@Override
+			public void onMouseMove(JTranscInput.MouseInfo info) {
+				game.setMouseInfo(info);
+			}
 
-            @Override
-            public void onTouchDown(JTranscInput.TouchInfo info) {
-            }
+			@Override
+			public void onMouseScroll(JTranscInput.MouseInfo info) {
+				game.setMouseInfo(info);
+			}
 
-            @Override
-            public void onTouchDrag(JTranscInput.TouchInfo info) {
-            }
+			@Override
+			public void onTouchDown(JTranscInput.TouchInfo info) {
+			}
 
-            @Override
-            public void onTouchUp(JTranscInput.TouchInfo info) {
-            }
-        });
-    }
+			@Override
+			public void onTouchDrag(JTranscInput.TouchInfo info) {
+			}
 
-    private final MouseEvent mouseEvent = new MouseEvent();
+			@Override
+			public void onTouchUp(JTranscInput.TouchInfo info) {
+			}
+		});
+	}
 
-    private void setMouseInfo(JTranscInput.MouseInfo info) {
-        mouseEvent.position.x = info.x;
-        mouseEvent.position.y = info.y;
-        mouseEvent.buttons = info.buttons;
-        mouse.setTo(info.x, info.y);
-        mouseButtons = info.buttons;
-        stage.root.dispatchEvent(mouseEvent);
-        //System.out.println("Event: " + getMouse);
-    }
+	private final MouseEvent mouseEvent = new MouseEvent();
+
+	private void setMouseInfo(JTranscInput.MouseInfo info) {
+		mouseEvent.position.x = info.x;
+		mouseEvent.position.y = info.y;
+		mouseEvent.buttons = info.buttons;
+		mouse.setTo(info.x, info.y);
+		mouseButtons = info.buttons;
+		stage.root.dispatchEvent(mouseEvent);
+		//System.out.println("Event: " + getMouse);
+	}
 }

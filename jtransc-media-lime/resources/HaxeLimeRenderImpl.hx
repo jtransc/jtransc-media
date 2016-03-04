@@ -10,14 +10,21 @@ class HaxeLimeRenderImpl {
     static public inline var BLEND_BELOW:Int = 16;
     static public inline var BLEND_MAX:Int = 17;
 
-	private var screenWidth:Float = 640.0;
-	private var screenHeight:Float = 480.0;
-	private var virtualWidth:Float = 640.0;
-	private var virtualHeight:Float = 480.0;
-	private var virtualActualWidth:Float = 640.0;
-	private var virtualActualHeight:Float = 480.0;
-	private var virtualScaleX:Float = 1.0;
-	private var virtualScaleY:Float = 1.0;
+    public function getVirtualActualWidth() {
+        return jtransc.media.JTranscWindow_.getVirtualActualWidth__D();
+    }
+
+    public function getVirtualActualHeight() {
+        return jtransc.media.JTranscWindow_.getVirtualActualHeight__D();
+    }
+
+    public function getScreenWidth() {
+        return jtransc.media.JTranscWindow_.getScreenWidth__D();
+    }
+
+    public function getScreenHeight() {
+        return jtransc.media.JTranscWindow_.getScreenHeight__D();
+    }
 
     public function createTexture(path:String, width:Int, height:Int):Int {
         return -1;
@@ -34,17 +41,6 @@ class HaxeLimeRenderImpl {
     public function disposeTexture(id:Int):Void {
 
     }
-
-	public function setDisplayInfo(screenWidth:Float, screenHeight:Float, virtualWidth:Float, virtualHeight:Float, virtualActualWidth:Float, virtualActualHeight:Float, virtualScaleX:Float, virtualScaleY:Float) {
-		this.screenWidth = screenWidth;
-		this.screenHeight = screenHeight;
-		this.virtualWidth = virtualWidth;
-		this.virtualHeight = virtualHeight;
-		this.virtualActualWidth = virtualActualWidth;
-		this.virtualActualHeight = virtualActualHeight;
-		this.virtualScaleX = virtualScaleX;
-		this.virtualScaleY = virtualScaleY;
-	}
 
     public function render(
         _vertices:haxe.io.Float32Array, vertexCount:Int,

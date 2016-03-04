@@ -16,7 +16,7 @@
 
 package jtransc.media;
 
-public class JTranscAudio {
+public final class JTranscAudio {
     static public Impl impl = new Impl() {
         @Override
         public int createSound(String path) {

@@ -1,7 +1,7 @@
 package jtransc.game.ui;
 
 public class Keys {
-    static public final int MAX = 255;
+    static public final int MAX = 512;
 
     static public final int UP = 19;
     static public final int DOWN = 20;

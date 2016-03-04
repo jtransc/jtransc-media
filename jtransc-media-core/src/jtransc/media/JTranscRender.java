@@ -44,10 +44,6 @@ public final class JTranscRender {
         }
 
 		@Override
-		public void setDisplayInfo(double screenWidth, double screenHeight, double virtualWidth, double virtualHeight, double virtualActualWidth, double virtualActualHeight, double virtualScaleX, double virtualScaleY) {
-		}
-
-		@Override
         public void render(FastMemory vertices, int vertexCount, short[] indices, int indexCount, int[] batches, int batchCount) {
             System.out.println("JTranscRender.render: vertices=" + vertexCount + ", indices=" + indexCount + " batches=" + batchCount);
         }
@@ -108,10 +104,6 @@ public final class JTranscRender {
      * 14. _reserved_
      * 15. _reserved_
      */
-    static public void setDisplayInfo(double screenWidth, double screenHeight, double virtualWidth, double virtualHeight, double virtualActualWidth, double virtualActualHeight, double virtualScaleX, double virtualScaleY) {
-		impl.setDisplayInfo(screenWidth, screenHeight, virtualWidth, virtualHeight, virtualActualWidth, virtualActualHeight,  virtualScaleX, virtualScaleY);
-	}
-
 	static public void render(FastMemory vertices, int vertexCount, short[] indices, int indexCount, int[] batches, int batchCount) {
         impl.render(vertices, vertexCount, indices, indexCount, batches, batchCount);
     }
@@ -124,8 +116,6 @@ public final class JTranscRender {
         int createTextureEncoded(byte[] data, int width, int height);
 
         void disposeTexture(int textureId);
-
-		void setDisplayInfo(double screenWidth, double screenHeight, double virtualWidth, double virtualHeight, double virtualActualWidth, double virtualActualHeight, double virtualScaleX, double virtualScaleY);
 
         void render(FastMemory vertices, int vertexCount, short[] indices, int indexCount, int[] batches, int batchCount);
     }

@@ -20,7 +20,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
-public class JTranscIO {
+public final class JTranscIO {
 	static public Impl impl = new Impl() {
 		@Override
 		public void readAsync(String path, JTranscCallback<byte[]> handler) {

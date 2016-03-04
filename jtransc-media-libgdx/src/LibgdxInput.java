@@ -2,6 +2,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import jtransc.media.JTranscInput;
+import jtransc.media.JTranscWindow;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -61,8 +62,7 @@ public class LibgdxInput {
 
 			@Override
 			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-				mouseInfo.x = screenX;
-				mouseInfo.y = screenY;
+				mouseInfo.setScreenXY(screenX, screenY);
 				mouseInfo.buttons = 1;
 				JTranscInput.impl.onMouseDown(mouseInfo);
 				return false;
@@ -70,8 +70,7 @@ public class LibgdxInput {
 
 			@Override
 			public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-				mouseInfo.x = screenX;
-				mouseInfo.y = screenY;
+				mouseInfo.setScreenXY(screenX, screenY);
 				mouseInfo.buttons = 0;
 				JTranscInput.impl.onMouseUp(mouseInfo);
 				return false;
@@ -84,8 +83,7 @@ public class LibgdxInput {
 
 			@Override
 			public boolean mouseMoved(int screenX, int screenY) {
-				mouseInfo.x = screenX;
-				mouseInfo.y = screenY;
+				mouseInfo.setScreenXY(screenX, screenY);
 				JTranscInput.impl.onMouseMove(mouseInfo);
 				return false;
 			}

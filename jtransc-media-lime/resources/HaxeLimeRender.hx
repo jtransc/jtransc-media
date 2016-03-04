@@ -37,10 +37,6 @@ class HaxeLimeRender {
         return impl.disposeTexture(id);
     }
 
-	static public function setDisplayInfo(screenWidth:Float, screenHeight:Float, virtualWidth:Float, virtualHeight:Float, virtualActualWidth:Float, virtualActualHeight:Float, virtualScaleX:Float, virtualScaleY:Float) {
-		impl.setDisplayInfo(screenWidth, screenHeight, virtualWidth, virtualHeight, virtualActualWidth, virtualActualHeight, virtualScaleX, virtualScaleY);
-	}
-
     static public function render(
         _vertices:haxe.io.Float32Array, vertexCount:Int,
         _indices:haxe.io.UInt16Array, indexCount:Int,

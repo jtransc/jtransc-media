@@ -6,7 +6,7 @@ import jtransc.media.JTranscAudio;
 
 public class LibgdxAudio implements JTranscAudio.Impl {
 	IntStack audioIds = new IntStack(2048);
-	Sound[] sounds = new Sound[2048];
+	WrappedSound[] sounds = new WrappedSound[2048];
 
 	public LibgdxAudio() {
 		for (int n = 2047; n >= 0; n--) audioIds.push(n);
@@ -16,7 +16,13 @@ public class LibgdxAudio implements JTranscAudio.Impl {
 	public int createSound(String path) {
 		int soundId = audioIds.pop();
 		FileHandle fileHandle = Gdx.files.internal(path);
-		sounds[soundId] = Gdx.audio.newSound(fileHandle);
+		Sound sound = null;
+		try {
+			sound = Gdx.audio.newSound(fileHandle);
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
+		sounds[soundId] = new WrappedSound(sound);
 		return soundId;
 	}
 
@@ -30,5 +36,22 @@ public class LibgdxAudio implements JTranscAudio.Impl {
 	@Override
 	public void playSound(int soundId) {
 		sounds[soundId].play();
+	}
+
+	static public class WrappedSound {
+		public Sound sound;
+
+		public WrappedSound(Sound sound) {
+			this.sound = sound;
+		}
+
+		public void dispose() {
+			if (sound != null) sound.dispose();
+			sound = null;
+		}
+
+		public void play() {
+			if (sound != null) sound.play();
+		}
 	}
 }
