@@ -66,7 +66,14 @@ public class JTranscLibgdx {
 					public void render() {
 						JTranscLibgdx.frame();
 					}
+
+					@Override
+					public void resize(int width, int height) {
+						JTranscWindow.dispatchResized(width, height);
+					}
 				};
+
+				JTranscWindow.dispatchResized(width, height);
 
 				//app = initLwjgl3(width, height, title, applicationAdapter);
 				app = initLwjgl2(width, height, title, applicationAdapter);
