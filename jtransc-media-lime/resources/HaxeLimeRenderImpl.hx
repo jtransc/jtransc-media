@@ -1,4 +1,8 @@
 class HaxeLimeRenderImpl {
+    static public inline var MASK_NONE = 0;
+    static public inline var MASK_SHAPE = 1;
+    static public inline var MASK_CONTENT = 2;
+
     static public inline var BLEND_INVALID:Int = -1;
     static public inline var BLEND_AUTO:Int = 0;
     static public inline var BLEND_NORMAL:Int = 1;
@@ -26,11 +30,30 @@ class HaxeLimeRenderImpl {
         return jtransc.media.JTranscWindow_.getScreenHeight__D();
     }
 
+    public function getVirtualScaleX() {
+        return jtransc.media.JTranscWindow_.getVirtualScaleX__D();
+    }
+
+    public function getVirtualScaleY() {
+        return jtransc.media.JTranscWindow_.getVirtualScaleY__D();
+    }
+
     public function createTexture(path:String, width:Int, height:Int):Int {
-        return -1;
+        trace('HaxeLimeRenderImpl.createTexture($path)');
+        //path = 'assets/image.png';
+        //trace('HaxeLimeRenderGL.createTexture[2]($path)');
+        return this._createTexture(null, HaxeLimeAssets.loadImage(path), width, height);
     }
 
     public function createTextureMemory(data:haxe.io.Int32Array, width:Int, height:Int, format:Int):Int {
+        trace('HaxeLimeRenderImpl.createTextureMemory($width, $height)');
+        var bytes = lime.utils.UInt8Array.fromBytes(data.view.buffer);
+        var buffer = new lime.graphics.ImageBuffer(bytes, width, height);
+        //trace(buffer);
+        return this._createTexture(new lime.graphics.Image(buffer, 0, 0, width, height), null, width, height);
+    }
+
+    public function _createTexture(image:lime.graphics.Image, imageFuture:lime.app.Future<lime.graphics.Image>, width:Int, height:Int):Int {
         return -1;
     }
 

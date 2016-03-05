@@ -16,21 +16,29 @@
 
 package jtransc.media;
 
-import java.io.DataInputStream;
-import java.io.File;
+import jtransc.io.JTranscIoTools;
+
 import java.io.FileInputStream;
 
 public final class JTranscIO {
 	static public Impl impl = new Impl() {
+		private ClassLoader classLoader = JTranscIO.class.getClassLoader();
+
 		@Override
 		public void readAsync(String path, JTranscCallback<byte[]> handler) {
 			try {
-				File file = new File(path);
-				byte[] fileData = new byte[(int) file.length()];
-				DataInputStream dis = new DataInputStream(new FileInputStream(file));
-				dis.readFully(fileData);
-				dis.close();
-				handler.handler(null, fileData);
+				byte[] data = JTranscIoTools.readStreamFully(new FileInputStream(path));
+				handler.handler(null, data);
+			} catch (Throwable t) {
+				handler.handler(t, null);
+			}
+		}
+
+		@Override
+		public void getResourceAsync(String path, JTranscCallback<byte[]> handler) {
+			try {
+				byte[] data = JTranscIoTools.readStreamFully(classLoader.getResourceAsStream(path));
+				handler.handler(null, data);
 			} catch (Throwable t) {
 				handler.handler(t, null);
 			}
@@ -41,7 +49,13 @@ public final class JTranscIO {
 		impl.readAsync(path, handler);
 	}
 
+	static public void getResourceAsync(String path, JTranscCallback<byte[]> handler) {
+		impl.getResourceAsync(path, handler);
+	}
+
 	public interface Impl {
 		void readAsync(String path, JTranscCallback<byte[]> handler);
+
+		void getResourceAsync(String path, JTranscCallback<byte[]> handler);
 	}
 }

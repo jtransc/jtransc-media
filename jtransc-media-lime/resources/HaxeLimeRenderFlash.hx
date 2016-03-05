@@ -122,10 +122,7 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
         return context != null;
     }
 
-    override public function createTexture(path:String, width:Int, height:Int):Int {
-        trace('HaxeLimeRenderFlash.createTexture($path)');
-        var image = HaxeLimeAssets.getImage(path);
-        var bitmapData = image.src;
+    override public function _createTexture(image:lime.graphics.Image, imageFuture:lime.app.Future<lime.graphics.Image>, width:Int, height:Int):Int {
         var id = textureIndices.pop();
         var texture = context.createRectangleTexture(
             width, height,
@@ -133,7 +130,20 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
             false
         );
         textures[id] = texture;
-        texture.uploadFromBitmapData(bitmapData);
+        if (image != null) {
+            var bitmapData = image.src;
+            texture.uploadFromBitmapData(bitmapData);
+        } else {
+            texture.uploadFromBitmapData(new flash.display.BitmapData(width, height));
+        }
+
+        if (imageFuture != null) {
+            imageFuture.onComplete(function(image) {
+                var bitmapData = image.src;
+                texture.uploadFromBitmapData(bitmapData);
+            });
+        }
+
         return id;
     }
 

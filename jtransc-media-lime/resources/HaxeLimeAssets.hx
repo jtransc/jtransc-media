@@ -1,3 +1,7 @@
+import lime.utils.Bytes;
+import lime.graphics.Image;
+import lime.audio.AudioBuffer;
+import lime.app.Future;
 
 class HaxeLimeAssets {
 	// @TODO: HACK!
@@ -21,5 +25,17 @@ class HaxeLimeAssets {
 
 	static public function getAudioBuffer(path:String) {
 		return lime.Assets.getAudioBuffer(fixpath(path));
+	}
+
+	static public function loadBytes(path:String):Future<Bytes> {
+		return lime.Assets.loadBytes(fixpath(path));
+	}
+
+	static public function loadImage(path:String):Future<Image> {
+		return lime.Assets.loadImage(fixpath(path));
+	}
+
+	static public function loadAudioBuffer(path:String):Future<AudioBuffer> {
+		return lime.Assets.loadAudioBuffer(fixpath(path));
 	}
 }

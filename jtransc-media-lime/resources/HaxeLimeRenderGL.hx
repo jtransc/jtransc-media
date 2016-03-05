@@ -11,7 +11,6 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
     private var glMatrixUniform:GLUniformLocation;
     private var glImageUniform:GLUniformLocation;
     private var glProgram:GLProgram;
-    private var glTexture:GLTexture;
     private var glTextureAttribute:Int;
     private var glVertexAttribute:Int;
     private var glColor0Attribute:Int;
@@ -103,14 +102,7 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         return true;
     }
 
-    override public function createTexture(path:String, width:Int, height:Int):Int {
-        trace('HaxeLimeRenderGL.createTexture($path)');
-        //path = 'assets/image.png';
-        //trace('HaxeLimeRenderGL.createTexture[2]($path)');
-        return this._createTexture(HaxeLimeAssets.getImage(path));
-    }
-
-    private function _createTexture(image:lime.graphics.Image) {
+    override public function _createTexture(image:lime.graphics.Image, imageFuture:lime.app.Future<lime.graphics.Image>, width:Int, height:Int):Int {
         var id = textureIndices.pop();
         var glTexture = textures[id] = gl.createTexture();
 
@@ -120,19 +112,25 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.buffer.width, image.buffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image.data);
+
+        if (image != null) {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.buffer.width, image.buffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image.data);
+        } else {
+            var imageBuffer = new lime.graphics.ImageBuffer(new lime.utils.UInt8Array([0,0,0,0]), 1, 1);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageBuffer.data);
+        }
+
+        if (imageFuture != null) {
+            imageFuture.onComplete(function(image) {
+                gl.bindTexture(gl.TEXTURE_2D, glTexture);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.buffer.width, image.buffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image.data);
+                gl.bindTexture(gl.TEXTURE_2D, null);
+            });
+        }
 
         gl.bindTexture(gl.TEXTURE_2D, null);
 
         return id;
-    }
-
-    override public function createTextureMemory(data:haxe.io.Int32Array, width:Int, height:Int, format:Int):Int {
-        trace('HaxeLimeRenderGL.createTextureMemory($width, $height)');
-        var bytes = lime.utils.UInt8Array.fromBytes(data.view.buffer);
-        var buffer = new lime.graphics.ImageBuffer(bytes, width, height);
-        //trace(buffer);
-        return this._createTexture(new lime.graphics.Image(buffer, 0, 0, width, height));
     }
 
     override public function disposeTexture(id:Int) {
@@ -142,24 +140,35 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         textureIndices.push(id);
     }
 
+    private var lastClip = new lime.math.Rectangle(0, 0, 8196, 8196);
+    private var currentScissors = new lime.math.Rectangle(0, 0, 8196, 8196);
+    private var FULL_SCISSORS = new lime.math.Rectangle(0, 0, 8196, 8196);
+
     override public function render(
         _vertices:haxe.io.Float32Array, vertexCount:Int,
         _indices:haxe.io.UInt16Array, indexCount:Int,
         _batches:haxe.io.Int32Array, batchCount:Int
     ) {
+        var virtualActualWidth = getVirtualActualWidth();
+        var virtualActualHeight = getVirtualActualHeight();
+        var screenWidth = getScreenWidth();
+        var screenHeight = getScreenHeight();
+        var virtualScaleX = getVirtualScaleX();
+        var virtualScaleY = getVirtualScaleY();
+
 
         var indicesData = lime.utils.UInt16Array.fromBytes(_indices.view.buffer, 0, indexCount);
         var verticesData = lime.utils.Float32Array.fromBytes(_vertices.view.buffer, 0, vertexCount * 6);
 
         gl.enable(gl.BLEND);
-        gl.viewport(0, 0, Std.int(this.getScreenWidth()), Std.int(this.getScreenHeight()));
+        gl.viewport(0, 0, Std.int(screenWidth), Std.int(screenHeight));
 
         gl.clearColor(0.2, 0.2, 0.2, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
 
         gl.useProgram(glProgram);
 
-        var matrix = Matrix4.createOrtho(0, getVirtualActualWidth(), getVirtualActualHeight(), 0, -1000, 1000);
+        var matrix = Matrix4.createOrtho(0, virtualActualWidth, virtualActualHeight, 0, -1000, 1000);
         gl.uniformMatrix4fv(glMatrixUniform, false, matrix);
         gl.uniform1i(glImageUniform, 0);
 
@@ -187,18 +196,33 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indicesData, gl.STATIC_DRAW);
 
+        lastClip.copyFrom(FULL_SCISSORS);
+        /*
+        gl.scissor(0, 0, 8196, 8196);
+        gl.disable(gl.STENCIL_TEST);
+        gl.disable(gl.SCISSOR_TEST);
+        */
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+
+        var lastMaskType = HaxeLimeRenderImpl.MASK_NONE;
+        var lastStencilIndex = -1;
+
         for (batchId in 0 ... batchCount) {
             var batchOffset = batchId * 16;
-            var indexStart    = _batches[batchOffset + 0];
-            var triangleCount = _batches[batchOffset + 1];
-            var textureId     = _batches[batchOffset + 2];
-            var blendMode     = _batches[batchOffset + 3];
-            var maskType      = _batches[batchOffset + 4];
-            var stencilIndex  = _batches[batchOffset + 5];
-            var scissorLeft   = _batches[batchOffset + 6];
-            var scissorTop    = _batches[batchOffset + 7];
-            var scissorRight  = _batches[batchOffset + 8];
-            var scissorBottom = _batches[batchOffset + 9];
+            var indexStart      = _batches[batchOffset + 0];
+            var triangleCount   = _batches[batchOffset + 1];
+            var textureId       = _batches[batchOffset + 2];
+            var blendMode       = _batches[batchOffset + 3];
+            var currentMaskType = _batches[batchOffset + 4];
+            var currentStencilIndex    = _batches[batchOffset + 5];
+            var scissorLeft     = _batches[batchOffset + 6];
+            var scissorTop      = _batches[batchOffset + 7];
+            var scissorRight    = _batches[batchOffset + 8];
+            var scissorBottom   = _batches[batchOffset + 9];
+
+            currentScissors.setTo(scissorLeft, scissorTop, scissorRight - scissorLeft, scissorBottom - scissorTop);
 
             var glTexture = textures[textureId];
 
@@ -230,6 +254,56 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
                 }
             }
 
+            /*
+            if (!lastClip.equals(currentScissors)) {
+                lastClip.copyFrom(currentScissors);
+                //if (debugBatch) batchReasons.push(PrenderBatchReason.CLIP)
+
+                if (glEnableDisable(gl, gl.SCISSOR_TEST, lastClip.equals(FULL_SCISSORS))) {
+                    gl.scissor(
+                        Std.int(lastClip.x * virtualScaleX),
+                        Std.int(screenHeight - (lastClip.y + lastClip.height) * virtualScaleY),
+                        Std.int(lastClip.width * virtualScaleX),
+                        Std.int(lastClip.height * virtualScaleY)
+                    );
+                }
+            }
+
+            if ((lastMaskType != currentMaskType) || (lastStencilIndex != currentStencilIndex)) {
+                lastMaskType = currentMaskType;
+                lastStencilIndex = currentStencilIndex;
+                switch (currentMaskType) {
+                    case HaxeLimeRenderImpl.MASK_NONE:
+                        gl.disable(gl.STENCIL_TEST);
+                        gl.depthMask(false);
+                        gl.colorMask(true, true, true, true);
+                        gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+                        gl.stencilFunc(gl.EQUAL, 0x00, 0x00);
+                        gl.stencilMask(0x00);
+                        break;
+                    case HaxeLimeRenderImpl.MASK_SHAPE:
+                        gl.enable(gl.STENCIL_TEST);
+                        gl.depthMask(true);
+                        gl.colorMask(false, false, false, false);
+                        gl.stencilOp(gl.REPLACE, gl.REPLACE, gl.REPLACE);
+                        gl.stencilFunc(gl.ALWAYS, currentStencilIndex, 0xFF);
+                        gl.stencilMask(0xFF); // write ref
+                        break;
+                    case HaxeLimeRenderImpl.MASK_CONTENT:
+                        gl.enable(gl.STENCIL_TEST);
+                        gl.depthMask(true);
+                        gl.colorMask(true, true, true, true);
+                        gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+                        gl.stencilFunc(gl.EQUAL, currentStencilIndex, 0xFF);
+                        gl.stencilMask(0x00);
+                        break;
+                    default:
+                        //if (debugBatch) batchReasons.push("mask unknown")
+                        break;
+                }
+            }
+            */
+
             //trace('batch:' + indexStart + ',' + triangleCount);
 
             gl.drawElements(gl.TRIANGLES, triangleCount * 3, gl.UNSIGNED_SHORT, indexStart * 2);
@@ -238,4 +312,20 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         //gl.deleteBuffer(verticesBuffer);
         //gl.deleteBuffer(indicesBuffer);
     }
+
+    static private function glEnableDisable(gl:GLRenderContext, type:Int, cond:Bool) {
+        if (cond) {
+            gl.enable(type);
+        } else {
+            gl.disable(type);
+        }
+        return cond;
+    }
 }
+
+/*
+class WrappedGLTexture {
+    public var texture: GLTexture;
+}
+*/
+

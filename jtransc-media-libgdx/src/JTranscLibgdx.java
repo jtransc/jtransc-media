@@ -20,6 +20,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.files.FileHandle;
+import jtransc.io.JTranscIoTools;
 import jtransc.media.*;
 import jtransc.JTranscVersion;
 
@@ -49,6 +50,12 @@ public class JTranscLibgdx {
 			@Override
 			public void readAsync(String path, JTranscCallback<byte[]> handler) {
 				byte[] bytes = Gdx.files.internal(path).readBytes();
+				handler.handler(null, bytes);
+			}
+
+			@Override
+			public void getResourceAsync(String path, JTranscCallback<byte[]> handler) {
+				byte[] bytes = JTranscIoTools.readStreamFully(JTranscLibgdx.class.getClassLoader().getResourceAsStream(path));
 				handler.handler(null, bytes);
 			}
 		};
