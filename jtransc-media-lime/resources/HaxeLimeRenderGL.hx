@@ -164,6 +164,7 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         gl.viewport(0, 0, Std.int(screenWidth), Std.int(screenHeight));
 
         gl.clearColor(0.2, 0.2, 0.2, 1.0);
+        gl.clearStencil(0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
 
         gl.useProgram(glProgram);
@@ -197,11 +198,13 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indicesData, gl.STATIC_DRAW);
 
         lastClip.copyFrom(FULL_SCISSORS);
-        /*
-        gl.scissor(0, 0, 8196, 8196);
-        gl.disable(gl.STENCIL_TEST);
         gl.disable(gl.SCISSOR_TEST);
-        */
+        gl.disable(gl.STENCIL_TEST);
+        gl.depthMask(false);
+        gl.colorMask(true, true, true, true);
+        gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+        gl.stencilFunc(gl.EQUAL, 0x00, 0x00);
+        gl.stencilMask(0x00);
 
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, null);
@@ -254,7 +257,6 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
                 }
             }
 
-            /*
             if (!lastClip.equals(currentScissors)) {
                 lastClip.copyFrom(currentScissors);
                 //if (debugBatch) batchReasons.push(PrenderBatchReason.CLIP)
@@ -269,6 +271,7 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
                 }
             }
 
+            /*
             if ((lastMaskType != currentMaskType) || (lastStencilIndex != currentStencilIndex)) {
                 lastMaskType = currentMaskType;
                 lastStencilIndex = currentStencilIndex;
