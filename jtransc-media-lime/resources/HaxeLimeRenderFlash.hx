@@ -12,7 +12,6 @@ import lime.Assets;
 class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
     private var stage:Stage;
     private var rootSprite:Sprite;
-    private var colorProgram:Program3D;
     private var textureProgram:Program3D;
     private var context:Context3D;
     private var textures:Array<RectangleTexture>;
@@ -42,27 +41,27 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 
             var assembler = new AGALMiniAssembler();
 
-            colorProgram = context.createProgram();
-            colorProgram.upload(
-                assembler.assemble(Context3DProgramType.VERTEX, [
-                    "m44 op, va0, vc0",
-                    "mov v0, va1"
-                    //"mov v0, va2"
-                ].join("\n")),
-                assembler.assemble(Context3DProgramType.FRAGMENT, [
-                    "mov oc, v0"
-                ].join("\n"))
-            );
-
             textureProgram = context.createProgram();
             textureProgram.upload(
                 assembler.assemble(Context3DProgramType.VERTEX, [
                     "m44 op, va0, vc0",
-                    "mov v0, va1"
+                    "mov v0, va1",
+					"mov v1, va2",
+					"mov vt0, va3",
+					"mul vt0, vt0, vc4.w",
+					"sub vt0, vt0, vc4.z",
+					"mov v2, vt0"
                 ].join("\n")),
                 assembler.assemble(Context3DProgramType.FRAGMENT, [
                     "tex ft0, v0.xyxx, fs0 <2d, linear, mipdisable, clamp>",
-                    "mov oc, ft0"
+					"div ft0.xyz, ft0.xyz, ft0.w", // tint, premultiplied
+					"mul ft0, ft0, v1", // tint
+					"add ft0, ft0, v2", // tint
+					"mul ft0.xyz, ft0.xyz, ft0.w", // tint, premultiplied
+					"sge ft1.x, fc0.y, ft0.w", // inmask
+					"neg ft1.x, ft1.x", // inmask
+					"kil ft1.x", // inmask
+					"mov oc, ft0"
                 ].join("\n"))
             );
         }
@@ -132,6 +131,14 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
         textures[id] = texture;
         if (image != null) {
             var bitmapData = image.src;
+			#if flash
+			if (bitmapData == null) {
+				var data = image.buffer.data.toBytes().getData();
+				var bmp:flash.display.BitmapData = new BitmapData(image.width, image.height);
+				bmp.setPixels(bmp.rect, data);
+				bitmapData = bmp;
+			}
+			#end
             texture.uploadFromBitmapData(bitmapData);
         } else {
             texture.uploadFromBitmapData(new flash.display.BitmapData(width, height));
@@ -183,6 +190,8 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 
             context.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
             context.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_2);
+			context.setVertexBufferAt(2, vertexBuffer, 4, Context3DVertexBufferFormat.BYTES_4);
+			context.setVertexBufferAt(3, vertexBuffer, 5, Context3DVertexBufferFormat.BYTES_4);
 
             createOrtho(0, getVirtualActualWidth(), getVirtualActualHeight(), 0, -1, 1, _projectionMatrix);
             context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, _projectionMatrix);
