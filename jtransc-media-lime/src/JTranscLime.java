@@ -112,7 +112,7 @@ public class JTranscLime {
 			"var bytes = HaxeLimeAssets.getBytes(p0._str); // LIME >= 2.8\n" +
 				"if (bytes == null) return null;\n" +
 				"var obj = new jtransc.io.JTranscSyncIO_ByteStream_();\n" +
-				"obj._init___B_V(HaxeByteArray.fromBytes(bytes));\n" +
+				"obj.jtransc_io_JTranscSyncIO_ByteStream_init___B_V(HaxeByteArray.fromBytes(bytes));\n" +
 				"return obj;\n"
 		)
 		private JTranscSyncIO.ImplStream _open(String path) {
