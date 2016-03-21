@@ -21,7 +21,7 @@
 
     <groupId>com.jtransc.media</groupId>
     <artifactId>jtransc-media-parent</artifactId>
-    <version>0.1.3</version>
+    <version>0.1.4</version>
     <packaging>pom</packaging>
 
     <name>jtransc media parent</name>
@@ -30,7 +30,7 @@
 
     <properties>
         <!-- base-->
-        <jtransc.version>0.1.3</jtransc.version>
+        <jtransc.version>0.1.4</jtransc.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

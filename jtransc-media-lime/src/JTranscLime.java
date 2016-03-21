@@ -6,6 +6,8 @@ import jtransc.annotation.haxe.HaxeMethodBody;
 import jtransc.io.JTranscSyncIO;
 import jtransc.media.*;
 
+import java.io.FileNotFoundException;
+
 @HaxeAddFiles({
 	"AGALMiniAssembler.hx",
 	"HaxeLimeAssets.hx",
@@ -34,7 +36,7 @@ public class JTranscLime {
 		JTranscAudio.impl = new JTranscAudioLimeImpl();
 		JTranscIO.impl = new JTranscIOLimeImpl();
 		JTranscEventLoop.impl = new JTranscEventLoopLimeImpl();
-		JTranscSyncIO.impl = new JTranscSyncIOLimeImpl();
+		JTranscSyncIO.impl = new JTranscSyncIOLimeImpl(JTranscSyncIO.impl);
 		JTranscWindow.referenced();
 	}
 
@@ -43,7 +45,7 @@ public class JTranscLime {
 		@HaxeMethodBody("HaxeLimeJTranscApplication.loopInit(p0.run__V);")
 		native public void init(Runnable init);
 
-		@Override
+		@Overridei
 		@HaxeMethodBody("HaxeLimeJTranscApplication.loopLoop(p0.run__V, p1.run__V);")
 		native public void loop(Runnable update, Runnable render);
 	}
@@ -101,11 +103,15 @@ public class JTranscLime {
 		}
 	}
 
-	static private class JTranscSyncIOLimeImpl implements JTranscSyncIO.Impl {
+	static private class JTranscSyncIOLimeImpl extends JTranscSyncIO.Impl {
+		public JTranscSyncIOLimeImpl(JTranscSyncIO.Impl parent) {
+			super(parent);
+		}
+
 		@Override
-		public JTranscSyncIO.ImplStream open(String path) {
+		public JTranscSyncIO.ImplStream open(String path, int mode) {
 			//return _open("assets/" + path);
-			return _open(path);
+			return _open(path, mode);
 		}
 
 		@HaxeMethodBody(
@@ -115,7 +121,7 @@ public class JTranscLime {
 				"obj.jtransc_io_JTranscSyncIO_ByteStream_init___B_V(HaxeByteArray.fromBytes(bytes));\n" +
 				"return obj;\n"
 		)
-		private JTranscSyncIO.ImplStream _open(String path) {
+		private JTranscSyncIO.ImplStream _open(String path, int mode) {
 			return new JTranscSyncIO.ByteStream(new byte[0]);
 		}
 	}

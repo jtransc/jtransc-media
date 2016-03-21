@@ -5,3 +5,8 @@
 /out_java/
 /out.jar
 /target
+/jtransc-game/target
+/jtransc-media-core/target
+/jtransc-media-libgdx/target
+/jtransc-media-lime/target
+/jtransc-media-parent/target
