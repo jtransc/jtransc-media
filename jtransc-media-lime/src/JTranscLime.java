@@ -45,7 +45,7 @@ public class JTranscLime {
 		@HaxeMethodBody("HaxeLimeJTranscApplication.loopInit(p0.run__V);")
 		native public void init(Runnable init);
 
-		@Overridei
+		@Override
 		@HaxeMethodBody("HaxeLimeJTranscApplication.loopLoop(p0.run__V, p1.run__V);")
 		native public void loop(Runnable update, Runnable render);
 	}
