@@ -26,7 +26,7 @@
         <groupId>com.jtransc.media</groupId>
         <artifactId>jtransc-media-parent</artifactId>
         <relativePath>jtransc-media-parent</relativePath>
-        <version>0.1.4</version>
+        <version>0.1.5</version>
     </parent>
 
     <modules>
