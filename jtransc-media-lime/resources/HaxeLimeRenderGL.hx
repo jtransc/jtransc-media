@@ -76,10 +76,10 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
 				void main() {
                     gl_FragColor = texture2D(u_sampler, v_texcoord.st);
                     if (gl_FragColor.a <= 0.0) discard;
-                    gl_FragColor.rgb /= gl_FragColor.a;
+//                    gl_FragColor.rgb /= gl_FragColor.a;//// alpha premultiplied is disable, we will study more in the future
                     gl_FragColor *= v_color;
                     gl_FragColor += v_colorOffset;
-                    gl_FragColor.rgb *= gl_FragColor.a;
+//                    gl_FragColor.rgb *= gl_FragColor.a;//// alpha premultiplied is disable, we will study more in the future
                     if (gl_FragColor.a <= 0.0) discard;
 				}
         ";
@@ -271,7 +271,6 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
                 }
             }
 
-            /*
             if ((lastMaskType != currentMaskType) || (lastStencilIndex != currentStencilIndex)) {
                 lastMaskType = currentMaskType;
                 lastStencilIndex = currentStencilIndex;
@@ -283,7 +282,6 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
                         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
                         gl.stencilFunc(gl.EQUAL, 0x00, 0x00);
                         gl.stencilMask(0x00);
-                        break;
                     case HaxeLimeRenderImpl.MASK_SHAPE:
                         gl.enable(gl.STENCIL_TEST);
                         gl.depthMask(true);
@@ -291,7 +289,6 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
                         gl.stencilOp(gl.REPLACE, gl.REPLACE, gl.REPLACE);
                         gl.stencilFunc(gl.ALWAYS, currentStencilIndex, 0xFF);
                         gl.stencilMask(0xFF); // write ref
-                        break;
                     case HaxeLimeRenderImpl.MASK_CONTENT:
                         gl.enable(gl.STENCIL_TEST);
                         gl.depthMask(true);
@@ -299,13 +296,10 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
                         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
                         gl.stencilFunc(gl.EQUAL, currentStencilIndex, 0xFF);
                         gl.stencilMask(0x00);
-                        break;
                     default:
                         //if (debugBatch) batchReasons.push("mask unknown")
-                        break;
                 }
             }
-            */
 
             //trace('batch:' + indexStart + ',' + triangleCount);
 
