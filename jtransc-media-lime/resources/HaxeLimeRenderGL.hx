@@ -76,10 +76,10 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
 				void main() {
                     gl_FragColor = texture2D(u_sampler, v_texcoord.st);
                     if (gl_FragColor.a <= 0.0) discard;
-                    gl_FragColor.rgb /= gl_FragColor.a;
+//                    gl_FragColor.rgb /= gl_FragColor.a;//// alpha premultiplied is disable, we will study more in the future
                     gl_FragColor *= v_color;
                     gl_FragColor += v_colorOffset;
-                    gl_FragColor.rgb *= gl_FragColor.a;
+//                    gl_FragColor.rgb *= gl_FragColor.a;//// alpha premultiplied is disable, we will study more in the future
                     if (gl_FragColor.a <= 0.0) discard;
 				}
         ";
