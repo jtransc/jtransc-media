@@ -29,7 +29,7 @@ import java.io.FileNotFoundException;
 		"    }\n" +
 		"}\n"
 )
-@HaxeAddLibraries({"lime:2.9.0"})
+@HaxeAddLibraries({"lime:2.9.1"})
 public class JTranscLime {
 	static public void init() {
 		JTranscRender.impl = new JTranscRenderLimeImpl();
