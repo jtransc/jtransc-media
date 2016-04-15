@@ -42,7 +42,10 @@ public class JTranscLibgdx {
 	}
 
 	static private void updatedScreenSize() {
-		JTranscWindow.setScreenSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		JTranscWindow.setScreenSize(
+			(int)(Gdx.graphics.getWidth() * Gdx.graphics.getDensity()),
+			(int)(Gdx.graphics.getHeight() * Gdx.graphics.getDensity())
+		);
 	}
 
 	static public void init() {
@@ -108,6 +111,7 @@ public class JTranscLibgdx {
 				config.height = height;
 				config.title = title;
 				config.stencil = 8;
+				config.useHDPI = true;
 				return new LwjglApplication(appAdapter, config);
 			}
 

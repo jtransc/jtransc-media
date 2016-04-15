@@ -169,8 +169,8 @@ class LibgdxRenderer implements JTranscRender.Impl {
 			new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, "a_colorOffset")
 		);
 
-		double screenWidth = JTranscWindow.getScreenWidth();
-		double screenHeight = JTranscWindow.getScreenHeight();
+		double screenWidth = Gdx.graphics.getWidth();
+		double screenHeight = Gdx.graphics.getHeight();
 		double virtualActualWidth = JTranscWindow.getVirtualActualWidth();
 		double virtualActualHeight = JTranscWindow.getVirtualActualHeight();
 		double virtualScaleX = JTranscWindow.getVirtualScaleX();

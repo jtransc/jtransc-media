@@ -6,6 +6,7 @@ import jtransc.media.JTranscWindow;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 
 public class LibgdxInput {
 	static public void config() {
@@ -29,6 +30,21 @@ public class LibgdxInput {
 
 			private HashMap<Integer, Integer> map = null;
 
+			private void populateMap(HashMap<Integer, Integer> map) {
+				map.put(Input.Keys.A, JTranscInput.Keys.A);
+				map.put(Input.Keys.ALT_LEFT, JTranscInput.Keys.ALT);
+				map.put(Input.Keys.ALT_RIGHT, JTranscInput.Keys.ALT);
+				map.put(Input.Keys.META_SYM_ON, JTranscInput.Keys.LEFT_WINDOW_KEY);
+				map.put(Input.Keys.SHIFT_LEFT, JTranscInput.Keys.SHIFT);
+				map.put(Input.Keys.SHIFT_RIGHT, JTranscInput.Keys.SHIFT);
+				map.put(Input.Keys.CONTROL_LEFT, JTranscInput.Keys.CTRL);
+				map.put(Input.Keys.CONTROL_RIGHT, JTranscInput.Keys.CTRL);
+				map.put(Input.Keys.UP, JTranscInput.Keys.UP_ARROW);
+				map.put(Input.Keys.DOWN, JTranscInput.Keys.DOWN_ARROW);
+				map.put(Input.Keys.LEFT, JTranscInput.Keys.LEFT_ARROW);
+				map.put(Input.Keys.RIGHT, JTranscInput.Keys.RIGHT_ARROW);
+			}
+
 			private int transformKeyCode(int keyCode) {
 				if (map == null) {
 					map = new HashMap<Integer, Integer>();
@@ -49,6 +65,7 @@ public class LibgdxInput {
 							e.printStackTrace();
 						}
 					}
+					populateMap(map);
 				}
 
 				Integer transformedKeyCode = map.get(keyCode);
