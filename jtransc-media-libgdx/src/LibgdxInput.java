@@ -77,18 +77,25 @@ public class LibgdxInput {
 				return false;
 			}
 
+			private void setRawMouse(int screenX, int screenY, int button) {
+				mouseInfo.setScreenXY(
+					(int)(screenX * Gdx.graphics.getDensity()),
+					(int)(screenY * Gdx.graphics.getDensity())
+				);
+				mouseInfo.buttons = button;
+			}
+
 			@Override
 			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-				mouseInfo.setScreenXY(screenX, screenY);
-				mouseInfo.buttons = 1;
+				//* Gdx.graphics.getDensity()
+				setRawMouse(screenX, screenY, 1);
 				JTranscInput.impl.onMouseDown(mouseInfo);
 				return false;
 			}
 
 			@Override
 			public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-				mouseInfo.setScreenXY(screenX, screenY);
-				mouseInfo.buttons = 0;
+				setRawMouse(screenX, screenY, 0);
 				JTranscInput.impl.onMouseUp(mouseInfo);
 				return false;
 			}
@@ -100,7 +107,7 @@ public class LibgdxInput {
 
 			@Override
 			public boolean mouseMoved(int screenX, int screenY) {
-				mouseInfo.setScreenXY(screenX, screenY);
+				setRawMouse(screenX, screenY, mouseInfo.buttons);
 				JTranscInput.impl.onMouseMove(mouseInfo);
 				return false;
 			}
