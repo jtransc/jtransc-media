@@ -86,6 +86,9 @@ public final class JTranscInput {
 		void onMouseMove(MouseInfo info);
 
 		@JTranscKeep
+		void onMouseWheel(int amount);
+
+		@JTranscKeep
 		void onMouseScroll(MouseInfo info);
 
 		@JTranscKeep
@@ -143,6 +146,11 @@ public final class JTranscInput {
 		@Override
 		public void onMouseMove(MouseInfo info) {
 			for (Handler handler : handlers) handler.onMouseMove(info);
+		}
+
+		@Override
+		public void onMouseWheel(int amount) {
+			for (Handler handler : handlers) handler.onMouseWheel(amount);
 		}
 
 		@Override

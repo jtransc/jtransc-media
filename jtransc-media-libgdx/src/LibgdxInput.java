@@ -102,11 +102,15 @@ public class LibgdxInput {
 
 			@Override
 			public boolean touchDragged(int screenX, int screenY, int pointer) {
+				//System.out.println("touchDragged!!");
+				setRawMouse(screenX, screenY, 1);
+				JTranscInput.impl.onMouseMove(mouseInfo);
 				return false;
 			}
 
 			@Override
 			public boolean mouseMoved(int screenX, int screenY) {
+				//System.out.println("mouseMoved!!");
 				setRawMouse(screenX, screenY, mouseInfo.buttons);
 				JTranscInput.impl.onMouseMove(mouseInfo);
 				return false;
@@ -114,6 +118,7 @@ public class LibgdxInput {
 
 			@Override
 			public boolean scrolled(int amount) {
+				JTranscInput.impl.onMouseWheel(amount);
 				return false;
 			}
 		});
