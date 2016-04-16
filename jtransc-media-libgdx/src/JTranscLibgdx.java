@@ -17,8 +17,8 @@
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.files.FileHandle;
 import jtransc.io.JTranscIoTools;
 import jtransc.media.*;
@@ -41,14 +41,15 @@ public class JTranscLibgdx {
 		if (r_render != null) r_render.run();
 	}
 
-	static private void updatedScreenSize() {
+	static private void updatedScreenSize(int width, int height) {
+		// Gdx.graphics.getHeight()
 		JTranscWindow.setScreenSize(
-			(int)(Gdx.graphics.getWidth() * Gdx.graphics.getDensity()),
-			(int)(Gdx.graphics.getHeight() * Gdx.graphics.getDensity())
+			(int)(width * Gdx.graphics.getDensity()),
+			(int)(height * Gdx.graphics.getDensity())
 		);
 	}
 
-	static public void init() {
+	static public void init(final int windowWidth, final int windowHeight, final String windowTitle) {
 		JTranscIO.impl = new JTranscIO.Impl() {
 			@Override
 			public void readAsync(String path, JTranscCallback<byte[]> handler) {
@@ -66,15 +67,16 @@ public class JTranscLibgdx {
 		JTranscEventLoop.impl = new JTranscEventLoop.Impl() {
 			@Override
 			public void init(final Runnable init) {
-				final int width = 640;
-				final int height = 480;
-				final String title = "JTransc " + JTranscVersion.getVersion();
+				//final int width = windowWidth;
+				//final int height = windowHeight;
+				//final String title = windowTitle;
+				//final String title = "JTransc " + JTranscVersion.getVersion();
 
 				ApplicationAdapter applicationAdapter = new ApplicationAdapter() {
 					@Override
 					public void create() {
 						JTranscLibgdx.init(init);
-						JTranscLibgdx.updatedScreenSize();
+						JTranscLibgdx.updatedScreenSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 					}
 
 					@Override
@@ -84,13 +86,15 @@ public class JTranscLibgdx {
 
 					@Override
 					public void resize(int width, int height) {
+						//System.out.println("resizing!!" + width + "x" + height);
 						//JTranscWindow.setScreenSize(width, height);
-						JTranscLibgdx.updatedScreenSize();
+						JTranscLibgdx.updatedScreenSize(width, height);
+						//render();
 					}
 				};
 
-				//app = initLwjgl3(width, height, title, applicationAdapter);
-				app = initLwjgl2(width, height, title, applicationAdapter);
+				app = initLwjgl3(windowWidth, windowHeight, windowTitle, applicationAdapter);
+				//app = initLwjgl2(width, height, title, applicationAdapter);
 				//app = initJglfw(width, height, title, applicationAdapter);
 			}
 
@@ -105,6 +109,7 @@ public class JTranscLibgdx {
 			}
 			*/
 
+			/*
 			private Application initLwjgl2(final int width, final int height, final String title, final ApplicationAdapter appAdapter) {
 				LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 				config.width = width;
@@ -114,8 +119,9 @@ public class JTranscLibgdx {
 				config.useHDPI = true;
 				return new LwjglApplication(appAdapter, config);
 			}
+			*/
 
-			/*
+
 			private Application initLwjgl3(final int width, final int height, final String title, final ApplicationAdapter appAdapter) {
 				Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 				config.setWindowedMode(width, height);
@@ -123,7 +129,7 @@ public class JTranscLibgdx {
 				//config.stencil = 8;
 				return new Lwjgl3Application(appAdapter, config);
 			}
-			*/
+
 
 			@Override
 			public void loop(Runnable update, Runnable render) {

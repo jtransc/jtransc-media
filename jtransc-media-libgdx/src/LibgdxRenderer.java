@@ -149,6 +149,16 @@ class LibgdxRenderer implements JTranscRender.Impl {
 	public void render(FastMemory vertices, int vertexCount, short[] indices, int indexCount, int[] batches, int batchCount) {
 		final GL20 gl = Gdx.gl;
 
+		double screenWidth = Gdx.graphics.getWidth();
+		double screenHeight = Gdx.graphics.getHeight();
+		double virtualActualWidth = JTranscWindow.getVirtualActualWidth();
+		double virtualActualHeight = JTranscWindow.getVirtualActualHeight();
+		double virtualScaleX = JTranscWindow.getVirtualScaleX();
+		double virtualScaleY = JTranscWindow.getVirtualScaleY();
+
+		gl.glViewport(0, 0, (int)screenWidth, (int)screenHeight);
+
+
 		gl.glDisable(GL20.GL_STENCIL_TEST);
 		gl.glDisable(GL20.GL_SCISSOR_TEST);
 		gl.glClearColor(0.4f, 0.4f, 0.4f, 1f);
@@ -173,12 +183,6 @@ class LibgdxRenderer implements JTranscRender.Impl {
 			new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, "a_colorOffset")
 		);
 
-		double screenWidth = Gdx.graphics.getWidth();
-		double screenHeight = Gdx.graphics.getHeight();
-		double virtualActualWidth = JTranscWindow.getVirtualActualWidth();
-		double virtualActualHeight = JTranscWindow.getVirtualActualHeight();
-		double virtualScaleX = JTranscWindow.getVirtualScaleX();
-		double virtualScaleY = JTranscWindow.getVirtualScaleY();
 
 		projection.setToOrtho(0f, (float) virtualActualWidth, (float) virtualActualHeight, 0f, 0f, 1f);
 
