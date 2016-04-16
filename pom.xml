@@ -33,6 +33,7 @@
         <module>jtransc-media-parent</module>
         <module>jtransc-media-core</module>
         <module>jtransc-media-libgdx</module>
+		<module>jtransc-media-lwjgl</module>
         <module>jtransc-media-lime</module>
         <module>jtransc-game</module>
         <!--

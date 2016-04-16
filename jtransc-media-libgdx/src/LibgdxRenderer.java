@@ -2,13 +2,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.glutils.VertexData;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.BufferUtils;
 import jtransc.FastMemory;
 import jtransc.ds.IntStack;
 import jtransc.media.JTranscRender;
 import jtransc.media.JTranscWindow;
 
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.Objects;
 
 class LibgdxRenderer implements JTranscRender.Impl {
