@@ -53,15 +53,15 @@ public class JTranscLime {
 	static private class JTranscRenderLimeImpl implements JTranscRender.Impl {
 		@Override
 		@HaxeMethodBody("return HaxeLimeRender.createTexture(p0._str, p1, p2);")
-		native public int createTexture(String path, int width, int height);
+		native public int createTexture(String path, int width, int height, boolean mipmaps);
 
 		@Override
 		// haxe.io.Int32Array
 		@HaxeMethodBody("return HaxeLimeRender.createTextureMemory(p0.data, p1, p2, p3);")
-		native public int createTextureMemory(int[] data, int width, int height, int format);
+		native public int createTextureMemory(int[] data, int width, int height, int format, boolean mipmaps);
 
 		@Override
-		native public int createTextureEncoded(byte[] data, int width, int height);
+		native public int createTextureEncoded(byte[] data, int width, int height, boolean mipmaps);
 
 		@Override
 		@HaxeMethodBody("HaxeLimeRender.disposeTexture(p0);")

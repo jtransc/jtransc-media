@@ -1,6 +1,7 @@
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import jtransc.JTranscSystem;
 import jtransc.media.JTranscInput;
 import jtransc.media.JTranscWindow;
 
@@ -118,7 +119,11 @@ public class LibgdxInput {
 
 			@Override
 			public boolean scrolled(int amount) {
-				JTranscInput.impl.onMouseWheel(amount);
+				if (JTranscSystem.isMac()) {
+					JTranscInput.impl.onMouseWheel(amount);
+				} else {
+					JTranscInput.impl.onMouseWheel(amount * 5);
+				}
 				return false;
 			}
 		});

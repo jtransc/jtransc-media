@@ -17,12 +17,10 @@
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import jtransc.io.JTranscIoTools;
 import jtransc.media.*;
-import jtransc.JTranscVersion;
 
 public class JTranscLibgdx {
 	static private Application app;
@@ -44,8 +42,8 @@ public class JTranscLibgdx {
 	static private void updatedScreenSize(int width, int height) {
 		// Gdx.graphics.getHeight()
 		JTranscWindow.setScreenSize(
-			(int)(width * Gdx.graphics.getDensity()),
-			(int)(height * Gdx.graphics.getDensity())
+			(int) (width * Gdx.graphics.getDensity()),
+			(int) (height * Gdx.graphics.getDensity())
 		);
 	}
 
@@ -93,8 +91,14 @@ public class JTranscLibgdx {
 					}
 				};
 
-				app = initLwjgl3(windowWidth, windowHeight, windowTitle, applicationAdapter);
-				//app = initLwjgl2(width, height, title, applicationAdapter);
+				/*
+				if (JTranscSystem.isMac()) {
+					app = initLwjgl2(windowWidth, windowHeight, windowTitle, applicationAdapter);
+				} else {
+					app = initLwjgl3(windowWidth, windowHeight, windowTitle, applicationAdapter);
+				}
+				*/
+				app = initLwjgl2(windowWidth, windowHeight, windowTitle, applicationAdapter);
 				//app = initJglfw(width, height, title, applicationAdapter);
 			}
 
@@ -109,7 +113,6 @@ public class JTranscLibgdx {
 			}
 			*/
 
-			/*
 			private Application initLwjgl2(final int width, final int height, final String title, final ApplicationAdapter appAdapter) {
 				LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 				config.width = width;
@@ -119,9 +122,8 @@ public class JTranscLibgdx {
 				config.useHDPI = true;
 				return new LwjglApplication(appAdapter, config);
 			}
-			*/
 
-
+			/*
 			private Application initLwjgl3(final int width, final int height, final String title, final ApplicationAdapter appAdapter) {
 				Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 				config.setWindowedMode(width, height);
@@ -130,6 +132,7 @@ public class JTranscLibgdx {
 				//config.stencil = 8;
 				return new Lwjgl3Application(appAdapter, config);
 			}
+			*/
 
 
 			@Override
