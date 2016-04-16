@@ -17,28 +17,28 @@ import java.util.Objects;
 
 class LibgdxRenderer implements JTranscRender.Impl {
 	IntStack textureIds = new IntStack(2048);
-	com.badlogic.gdx.graphics.Texture[] textures = new com.badlogic.gdx.graphics.Texture[2048];
+	Texture2[] textures = new Texture2[2048];
 
 	public LibgdxRenderer() {
 		for (int n = 2047; n >= 0; n--) textureIds.push(n);
 		System.out.println("LibgdxRenderer()");
-		int blankTextureId = createTextureMemory(new int[]{0xFFFFFFFF}, 1, 1, JTranscRender.TYPE_RGBA);
+		int blankTextureId = createTextureMemory(new int[]{0xFFFFFFFF}, 1, 1, JTranscRender.TYPE_RGBA, false);
 		System.out.println("LibgdxRenderer() : " + blankTextureId);
 	}
 
 	@Override
-	public int createTexture(String path, int width, int height) {
+	public int createTexture(String path, int width, int height, boolean mipmaps) {
 		int textureId = textureIds.pop();
 		FileHandle fileHandle = Gdx.files.internal(path);
 		System.out.println("Loading texture... " + fileHandle.file().getAbsolutePath() + ", exists: " + fileHandle.exists());
 		//textures[textureId] = new com.badlogic.gdx.graphics.Texture(fileHandle.file().getAbsolutePath());
-		textures[textureId] = new com.badlogic.gdx.graphics.Texture(fileHandle);
+		textures[textureId] = new Texture2(new com.badlogic.gdx.graphics.Texture(fileHandle, mipmaps), mipmaps);
 		System.out.println(" ---> " + textureId);
 		return textureId;
 	}
 
 	@Override
-	public int createTextureMemory(int[] data, int width, int height, int format) {
+	public int createTextureMemory(int[] data, int width, int height, int format, boolean mipmaps) {
 		int textureId = textureIds.pop();
 		Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
 		int offset = 0;
@@ -48,14 +48,14 @@ class LibgdxRenderer implements JTranscRender.Impl {
 				offset++;
 			}
 		}
-		textures[textureId] = new com.badlogic.gdx.graphics.Texture(pixmap);
+		textures[textureId] = new Texture2(new com.badlogic.gdx.graphics.Texture(pixmap, mipmaps), mipmaps);
 		return textureId;
 	}
 
 	@Override
-	public int createTextureEncoded(byte[] data, int width, int height) {
+	public int createTextureEncoded(byte[] data, int width, int height, boolean mipmaps) {
 		int textureId = textureIds.pop();
-		textures[textureId] = new com.badlogic.gdx.graphics.Texture(new Pixmap(data, 0, data.length));
+		textures[textureId] = new Texture2(new com.badlogic.gdx.graphics.Texture(new Pixmap(data, 0, data.length), mipmaps), mipmaps);
 		return textureId;
 	}
 
@@ -223,13 +223,13 @@ class LibgdxRenderer implements JTranscRender.Impl {
 
 			currentScissors.set(scissorLeft, scissorTop, scissorRight - scissorLeft, scissorBottom - scissorTop);
 
-			com.badlogic.gdx.graphics.Texture glTexture = textures[textureId];
+			Texture2 glTexture = textures[textureId];
 
 			if (glTexture == null) {
 				gl.glBindTexture(GL20.GL_TEXTURE_2D, 0);
 			} else {
-				glTexture.bind(0);
-				glTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+				glTexture.texture.bind(0);
+				glTexture.setFilter();
 			}
 
 			switch (blendMode) {
@@ -305,5 +305,27 @@ class LibgdxRenderer implements JTranscRender.Impl {
 
 		mesh.dispose();
 
+	}
+
+	static class Texture2 {
+		com.badlogic.gdx.graphics.Texture texture;
+		boolean mipmaps;
+
+		public Texture2(Texture texture, boolean mipmaps) {
+			this.texture = texture;
+			this.mipmaps = mipmaps;
+		}
+
+		public void dispose() {
+			texture.dispose();
+		}
+
+		public void setFilter() {
+			if (mipmaps) {
+				this.texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.MipMapLinearLinear);
+			} else {
+				this.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+			}
+		}
 	}
 }

@@ -21,19 +21,19 @@ import jtransc.FastMemory;
 public final class JTranscRender {
     static public Impl impl = new Impl() {
         @Override
-        public int createTexture(String path, int width, int height) {
+        public int createTexture(String path, int width, int height, boolean mipmaps) {
             System.out.println("JTranscRender.createTexture:" + path + ", size:" + width + "x" + height);
             return -1;
         }
 
         @Override
-        public int createTextureMemory(int[] data, int width, int height, int format) {
+        public int createTextureMemory(int[] data, int width, int height, int format, boolean mipmaps) {
             System.out.println("JTranscRender.createTextureMemory:" + data.length + ", size:" + width + "x" + height + ", " + format);
             return -1;
         }
 
         @Override
-        public int createTextureEncoded(byte[] data, int width, int height) {
+        public int createTextureEncoded(byte[] data, int width, int height, boolean mipmaps) {
             System.out.println("JTranscRender.createTextureEncoded:" + data.length + ", size:" + width + "x" + height + "");
             return -1;
         }
@@ -49,16 +49,20 @@ public final class JTranscRender {
         }
     };
 
-    static public int createTexture(String path, int width, int height) {
-        return impl.createTexture(path, width, height);
+    static public int createTexture(String path, int width, int height, boolean mipmaps) {
+		try {
+			return impl.createTexture(path, width, height, mipmaps);
+		} catch (Throwable t) {
+			return createTextureMemory(new int[] { -1 }, 1, 1, 1, mipmaps);
+		}
     }
 
-    static public int createTextureMemory(int[] data, int width, int height, int type) {
-        return impl.createTextureMemory(data, width, height, type);
+    static public int createTextureMemory(int[] data, int width, int height, int type, boolean mipmaps) {
+        return impl.createTextureMemory(data, width, height, type, mipmaps);
     }
 
-    static public int createTextureEncoded(byte[] data, int width, int height) {
-        return impl.createTextureEncoded(data, width, height);
+    static public int createTextureEncoded(byte[] data, int width, int height, boolean mipmaps) {
+        return impl.createTextureEncoded(data, width, height, mipmaps);
     }
 
     static public void disposeTexture(int textureId) {
@@ -109,11 +113,11 @@ public final class JTranscRender {
     }
 
     public interface Impl {
-        int createTexture(String path, int width, int height);
+        int createTexture(String path, int width, int height, boolean mipmaps);
 
-        int createTextureMemory(int[] data, int width, int height, int format);
+        int createTextureMemory(int[] data, int width, int height, int format, boolean mipmaps);
 
-        int createTextureEncoded(byte[] data, int width, int height);
+        int createTextureEncoded(byte[] data, int width, int height, boolean mipmaps);
 
         void disposeTexture(int textureId);
 

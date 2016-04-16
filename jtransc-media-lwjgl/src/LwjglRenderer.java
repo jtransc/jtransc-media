@@ -28,12 +28,12 @@ class LwjglRenderer implements JTranscRender.Impl {
 		this.window = window;
 		for (int n = 2047; n >= 0; n--) textureIds.push(n);
 		System.out.println("LwjglRenderer()");
-		int blankTextureId = createTextureMemory(new int[]{0xFFFFFFFF}, 1, 1, JTranscRender.TYPE_RGBA);
+		int blankTextureId = createTextureMemory(new int[]{0xFFFFFFFF}, 1, 1, JTranscRender.TYPE_RGBA, false);
 		System.out.println("LwjglRenderer() : " + blankTextureId);
 	}
 
 	@Override
-	public int createTexture(String path, int width, int height) {
+	public int createTexture(String path, int width, int height, boolean mipmaps) {
 		int textureId = textureIds.pop();
 		File file = LwjglFiles.getResource(path);
 		System.out.println("Loading texture... " + file.getAbsolutePath() + ", exists: " + file.exists());
@@ -44,14 +44,14 @@ class LwjglRenderer implements JTranscRender.Impl {
 	}
 
 	@Override
-	public int createTextureMemory(int[] data, int width, int height, int format) {
+	public int createTextureMemory(int[] data, int width, int height, int format, boolean mipmaps) {
 		int textureId = textureIds.pop();
 		textures[textureId] = new Texture(data, width, height);
 		return textureId;
 	}
 
 	@Override
-	public int createTextureEncoded(byte[] data, int width, int height) {
+	public int createTextureEncoded(byte[] data, int width, int height, boolean mipmaps) {
 		int textureId = textureIds.pop();
 		textures[textureId] = new Texture(new ByteArrayInputStream(data));
 		return textureId;

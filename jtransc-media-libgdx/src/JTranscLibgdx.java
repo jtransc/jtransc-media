@@ -126,6 +126,7 @@ public class JTranscLibgdx {
 				Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 				config.setWindowedMode(width, height);
 				config.setTitle(title);
+				config.setHdpiMode(Lwjgl3ApplicationConfiguration.HdpiMode.Logical);
 				//config.stencil = 8;
 				return new Lwjgl3Application(appAdapter, config);
 			}
