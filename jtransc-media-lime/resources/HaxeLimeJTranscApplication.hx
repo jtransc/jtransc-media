@@ -67,17 +67,20 @@ class HaxeLimeJTranscApplication extends lime.app.Application {
 }
 
 class JTranscModule extends lime.app.Module {
-    override public function onMouseUp (window:Window, x:Float, y:Float, button:Int):Void {
+    override public function onMouseUp(window:Window, x:Float, y:Float, button:Int):Void {
         JTranscInput_.mouseInfo.setScreenXY_II_V(Std.int(x), Std.int(y));
         JTranscInput_.mouseInfo.buttons &= ~(1 << button);
         JTranscInput_.impl.onMouseUp_Ljtransc_media_JTranscInput_MouseInfo__V(JTranscInput_.mouseInfo);
     }
-    override public function onMouseDown (window:Window, x:Float, y:Float, button:Int):Void {
+    override public function onMouseWheel (window:Window, deltaX:Float, deltaY:Float):Void {
+        JTranscInput_.impl.onMouseWheel_I_V(Std.int(deltaY));
+    }
+    override public function onMouseDown(window:Window, x:Float, y:Float, button:Int):Void {
         JTranscInput_.mouseInfo.setScreenXY_II_V(Std.int(x), Std.int(y));
         JTranscInput_.mouseInfo.buttons |= 1 << button;
         JTranscInput_.impl.onMouseDown_Ljtransc_media_JTranscInput_MouseInfo__V(JTranscInput_.mouseInfo);
     }
-    override public function onMouseMove (window:Window, x:Float, y:Float):Void {
+    override public function onMouseMove(window:Window, x:Float, y:Float):Void {
         JTranscInput_.mouseInfo.setScreenXY_II_V(Std.int(x), Std.int(y));
         JTranscInput_.impl.onMouseMove_Ljtransc_media_JTranscInput_MouseInfo__V(JTranscInput_.mouseInfo);
     }

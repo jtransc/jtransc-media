@@ -6,8 +6,6 @@ import jtransc.annotation.haxe.HaxeMethodBody;
 import jtransc.io.JTranscSyncIO;
 import jtransc.media.*;
 
-import java.io.FileNotFoundException;
-
 @HaxeAddFiles({
 	"AGALMiniAssembler.hx",
 	"HaxeLimeAssets.hx",
@@ -19,15 +17,15 @@ import java.io.FileNotFoundException;
 	"HaxeLimeRenderImpl.hx",
 	"HaxeLimeIO.hx"
 })
-@HaxeCustomMain(
+@HaxeCustomMain("" +
 	"package $entryPointPackage;\n" +
-		"class $entryPointSimpleName extends HaxeLimeJTranscApplication {\n" +
-		"    public function new() {\n" +
-		"        super();\n" +
-		"        $inits\n" +
-		"        $mainClass.$mainMethod(HaxeNatives.strArray(HaxeNatives.args()));\n" +
-		"    }\n" +
-		"}\n"
+	"class $entryPointSimpleName extends HaxeLimeJTranscApplication {\n" +
+	"    public function new() {\n" +
+	"        super();\n" +
+	"        $inits\n" +
+	"        $mainClass.$mainMethod(HaxeNatives.strArray(HaxeNatives.args()));\n" +
+	"    }\n" +
+	"}\n"
 )
 @HaxeAddLibraries({"lime:2.9.1"})
 public class JTranscLime {
@@ -88,12 +86,12 @@ public class JTranscLime {
 
 	static private class JTranscIOLimeImpl implements JTranscIO.Impl {
 		@Override
-		@HaxeMethodBody(
+		@HaxeMethodBody("" +
 			"var futureBytes = HaxeLimeAssets.loadBytes(p0._str);\n" +
-				"futureBytes.onComplete(function(bytes) {\n" +
-				"   p1.handler_Ljava_lang_Throwable_Ljava_lang_Object__V(null, HaxeByteArray.fromBytes(bytes));\n" +
-				"});\n" +
-				"\n"
+			"futureBytes.onComplete(function(bytes) {\n" +
+			"   p1.handler_Ljava_lang_Throwable_Ljava_lang_Object__V(null, HaxeByteArray.fromBytes(bytes));\n" +
+			"});\n" +
+			"\n"
 		)
 		native public void readAsync(String path, JTranscCallback<byte[]> handler);
 
@@ -114,12 +112,12 @@ public class JTranscLime {
 			return _open(path, mode);
 		}
 
-		@HaxeMethodBody(
+		@HaxeMethodBody("" +
 			"var bytes = HaxeLimeAssets.getBytes(p0._str); // LIME >= 2.8\n" +
-				"if (bytes == null) return null;\n" +
-				"var obj = new jtransc.io.JTranscSyncIO_ByteStream_();\n" +
-				"obj.jtransc_io_JTranscSyncIO_ByteStream_init___B_V(HaxeByteArray.fromBytes(bytes));\n" +
-				"return obj;\n"
+			"if (bytes == null) return null;\n" +
+			"var obj = new jtransc.io.JTranscSyncIO_ByteStream_();\n" +
+			"obj.jtransc_io_JTranscSyncIO_ByteStream_init___B_V(HaxeByteArray.fromBytes(bytes));\n" +
+			"return obj;\n"
 		)
 		private JTranscSyncIO.ImplStream _open(String path, int mode) {
 			return new JTranscSyncIO.ByteStream(new byte[0]);
