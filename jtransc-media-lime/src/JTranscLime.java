@@ -40,11 +40,11 @@ public class JTranscLime {
 
 	static private class JTranscEventLoopLimeImpl implements JTranscEventLoop.Impl {
 		@Override
-		@HaxeMethodBody("HaxeLimeJTranscApplication.loopInit(p0.run__V);")
+		@HaxeMethodBody("HaxeLimeJTranscApplication.loopInit(function() { p0.run__V(); });")
 		native public void init(Runnable init);
 
 		@Override
-		@HaxeMethodBody("HaxeLimeJTranscApplication.loopLoop(p0.run__V, p1.run__V);")
+		@HaxeMethodBody("HaxeLimeJTranscApplication.loopLoop(function() { p0.run__V(); }, function() { p1.run__V(); });")
 		native public void loop(Runnable update, Runnable render);
 	}
 
