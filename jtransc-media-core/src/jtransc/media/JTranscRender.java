@@ -49,7 +49,19 @@ public final class JTranscRender {
         }
     };
 
-    static public int createTexture(String path, int width, int height, boolean mipmaps) {
+	static public int createTexture(String path, int width, int height) {
+		return createTexture(path, width, height, false);
+	}
+
+	static public int createTextureMemory(int[] data, int width, int height, int type) {
+		return createTextureMemory(data, width, height, type, false);
+	}
+
+	static public int createTextureEncoded(byte[] data, int width, int height) {
+		return createTextureEncoded(data, width, height, false);
+	}
+
+	static public int createTexture(String path, int width, int height, boolean mipmaps) {
 		try {
 			return impl.createTexture(path, width, height, mipmaps);
 		} catch (Throwable t) {
@@ -57,7 +69,7 @@ public final class JTranscRender {
 		}
     }
 
-    static public int createTextureMemory(int[] data, int width, int height, int type, boolean mipmaps) {
+	static public int createTextureMemory(int[] data, int width, int height, int type, boolean mipmaps) {
         return impl.createTextureMemory(data, width, height, type, mipmaps);
     }
 

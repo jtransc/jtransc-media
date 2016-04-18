@@ -19,6 +19,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import jtransc.JTranscSystem;
+import jtransc.JTranscVersion;
 import jtransc.io.JTranscIoTools;
 import jtransc.media.*;
 
@@ -45,6 +47,10 @@ public class JTranscLibgdx {
 			(int) (width * Gdx.graphics.getDensity()),
 			(int) (height * Gdx.graphics.getDensity())
 		);
+	}
+
+	static public void init() {
+		init(640, 480, "JTransc " + JTranscVersion.getVersion());
 	}
 
 	static public void init(final int windowWidth, final int windowHeight, final String windowTitle) {
