@@ -19,35 +19,7 @@ package jtransc.media;
 import jtransc.FastMemory;
 
 public final class JTranscRender {
-    static public Impl impl = new Impl() {
-        @Override
-        public int createTexture(String path, int width, int height, boolean mipmaps) {
-            System.out.println("JTranscRender.createTexture:" + path + ", size:" + width + "x" + height);
-            return -1;
-        }
-
-        @Override
-        public int createTextureMemory(int[] data, int width, int height, int format, boolean mipmaps) {
-            System.out.println("JTranscRender.createTextureMemory:" + data.length + ", size:" + width + "x" + height + ", " + format);
-            return -1;
-        }
-
-        @Override
-        public int createTextureEncoded(byte[] data, int width, int height, boolean mipmaps) {
-            System.out.println("JTranscRender.createTextureEncoded:" + data.length + ", size:" + width + "x" + height + "");
-            return -1;
-        }
-
-        @Override
-        public void disposeTexture(int textureId) {
-            System.out.println("JTranscRender.disposeTexture:" + textureId);
-        }
-
-		@Override
-        public void render(FastMemory vertices, int vertexCount, short[] indices, int indexCount, int[] batches, int batchCount) {
-            System.out.println("JTranscRender.render: vertices=" + vertexCount + ", indices=" + indexCount + " batches=" + batchCount);
-        }
-    };
+    static public Impl impl = new ImplAdaptor();
 
 	static public int createTexture(String path, int width, int height) {
 		return createTexture(path, width, height, false);
@@ -135,4 +107,34 @@ public final class JTranscRender {
 
         void render(FastMemory vertices, int vertexCount, short[] indices, int indexCount, int[] batches, int batchCount);
     }
+
+	static public class ImplAdaptor implements Impl {
+		@Override
+		public int createTexture(String path, int width, int height, boolean mipmaps) {
+			System.out.println("JTranscRender.createTexture:" + path + ", size:" + width + "x" + height);
+			return -1;
+		}
+
+		@Override
+		public int createTextureMemory(int[] data, int width, int height, int format, boolean mipmaps) {
+			System.out.println("JTranscRender.createTextureMemory:" + data.length + ", size:" + width + "x" + height + ", " + format);
+			return -1;
+		}
+
+		@Override
+		public int createTextureEncoded(byte[] data, int width, int height, boolean mipmaps) {
+			System.out.println("JTranscRender.createTextureEncoded:" + data.length + ", size:" + width + "x" + height + "");
+			return -1;
+		}
+
+		@Override
+		public void disposeTexture(int textureId) {
+			System.out.println("JTranscRender.disposeTexture:" + textureId);
+		}
+
+		@Override
+		public void render(FastMemory vertices, int vertexCount, short[] indices, int indexCount, int[] batches, int batchCount) {
+			System.out.println("JTranscRender.render: vertices=" + vertexCount + ", indices=" + indexCount + " batches=" + batchCount);
+		}
+	}
 }

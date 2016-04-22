@@ -101,6 +101,60 @@ public final class JTranscInput {
 		void onTouchUp(TouchInfo info);
 	}
 
+	static public class HandlerAdaptor implements Handler {
+		@Override
+		public void onKeyTyped(KeyInfo info) {
+		}
+
+		@Override
+		public void onKeyDown(KeyInfo info) {
+		}
+
+		@Override
+		public void onKeyUp(KeyInfo info) {
+		}
+
+		@Override
+		public void onGamepadPressed(GamepadInfo info) {
+		}
+
+		@Override
+		public void onGamepadRelepased(GamepadInfo info) {
+		}
+
+		@Override
+		public void onMouseDown(MouseInfo info) {
+		}
+
+		@Override
+		public void onMouseUp(MouseInfo info) {
+		}
+
+		@Override
+		public void onMouseMove(MouseInfo info) {
+		}
+
+		@Override
+		public void onMouseWheel(int amount) {
+		}
+
+		@Override
+		public void onMouseScroll(MouseInfo info) {
+		}
+
+		@Override
+		public void onTouchDown(TouchInfo info) {
+		}
+
+		@Override
+		public void onTouchDrag(TouchInfo info) {
+		}
+
+		@Override
+		public void onTouchUp(TouchInfo info) {
+		}
+	}
+
 	static public class ListHandler implements Handler, Impl {
 		private ArrayList<Handler> handlers = new ArrayList<Handler>();
 

@@ -21,29 +21,7 @@ import jtransc.io.JTranscIoTools;
 import java.io.FileInputStream;
 
 public final class JTranscIO {
-	static public Impl impl = new Impl() {
-		private ClassLoader classLoader = JTranscIO.class.getClassLoader();
-
-		@Override
-		public void readAsync(String path, JTranscCallback<byte[]> handler) {
-			try {
-				byte[] data = JTranscIoTools.readStreamFully(new FileInputStream(path));
-				handler.handler(null, data);
-			} catch (Throwable t) {
-				handler.handler(t, null);
-			}
-		}
-
-		@Override
-		public void getResourceAsync(String path, JTranscCallback<byte[]> handler) {
-			try {
-				byte[] data = JTranscIoTools.readStreamFully(classLoader.getResourceAsStream(path));
-				handler.handler(null, data);
-			} catch (Throwable t) {
-				handler.handler(t, null);
-			}
-		}
-	};
+	static public Impl impl = new ImplAdaptor();
 
 	static public void readAsync(String path, JTranscCallback<byte[]> handler) {
 		impl.readAsync(path, handler);
@@ -57,5 +35,30 @@ public final class JTranscIO {
 		void readAsync(String path, JTranscCallback<byte[]> handler);
 
 		void getResourceAsync(String path, JTranscCallback<byte[]> handler);
+	}
+
+	static public class ImplAdaptor implements Impl {
+		static private ClassLoader classLoader = JTranscIO.class.getClassLoader();
+
+		@Override
+		public void readAsync(String path, JTranscCallback<byte[]> handler) {
+			try {
+				byte[] data = JTranscIoTools.readStreamFully(new FileInputStream(path));
+				handler.handler(null, data);
+			} catch (Throwable t) {
+				handler.handler(t, null);
+			}
+
+		}
+
+		@Override
+		public void getResourceAsync(String path, JTranscCallback<byte[]> handler) {
+			try {
+				byte[] data = JTranscIoTools.readStreamFully(classLoader.getResourceAsStream(path));
+				handler.handler(null, data);
+			} catch (Throwable t) {
+				handler.handler(t, null);
+			}
+		}
 	}
 }

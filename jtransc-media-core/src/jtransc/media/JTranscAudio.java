@@ -17,41 +17,43 @@
 package jtransc.media;
 
 public final class JTranscAudio {
-    static public Impl impl = new Impl() {
-        @Override
-        public int createSound(String path) {
-            System.out.println("JTranscAudio.createSound:" + path);
-            return -1;
-        }
+	static public Impl impl = new ImplAdaptor();
 
-        @Override
-        public void disposeSound(int soundId) {
-            System.out.println("JTranscAudio.disposeSound:" + soundId);
-        }
+	static public int createSound(String path) {
+		return impl.createSound(path);
+	}
 
-        @Override
-        public void playSound(int soundId) {
-            System.out.println("JTranscAudio.playSound:" + soundId);
-        }
-    };
+	static public void disposeSound(int soundId) {
+		impl.disposeSound(soundId);
+	}
 
-    static public int createSound(String path) {
-        return impl.createSound(path);
-    }
+	static public void playSound(int soundId) {
+		impl.playSound(soundId);
+	}
 
-    static public void disposeSound(int soundId) {
-        impl.disposeSound(soundId);
-    }
+	public interface Impl {
+		int createSound(String path);
 
-    static public void playSound(int soundId) {
-        impl.playSound(soundId);
-    }
+		void disposeSound(int soundId);
 
-    public interface Impl {
-        int createSound(String path);
+		void playSound(int soundId);
+	}
 
-        void disposeSound(int soundId);
+	static public class ImplAdaptor implements Impl {
+		@Override
+		public int createSound(String path) {
+			System.out.println("JTranscAudio.createSound:" + path);
+			return -1;
+		}
 
-        void playSound(int soundId);
-    }
+		@Override
+		public void disposeSound(int soundId) {
+			System.out.println("JTranscAudio.disposeSound:" + soundId);
+		}
+
+		@Override
+		public void playSound(int soundId) {
+			System.out.println("JTranscAudio.playSound:" + soundId);
+		}
+	}
 }
