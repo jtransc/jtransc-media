@@ -96,11 +96,7 @@ public class JTranscGame {
 
 		final KeyEvent keyEvent = new KeyEvent();
 
-		JTranscInput.addHandler(new JTranscInput.Handler() {
-			@Override
-			public void onKeyTyped(JTranscInput.KeyInfo info) {
-			}
-
+		JTranscInput.addHandler(new JTranscInput.HandlerAdaptor() {
 			@Override
 			public void onKeyDown(JTranscInput.KeyInfo info) {
 				_onKeyDownUp(info, true);
@@ -116,14 +112,6 @@ public class JTranscGame {
 				keyEvent.keyCode = info.keyCode;
 				stage.root.dispatchEvent(keyEvent);
 				game.pressingKeys[info.keyCode & 0x1FF] = true;
-			}
-
-			@Override
-			public void onGamepadPressed(JTranscInput.GamepadInfo info) {
-			}
-
-			@Override
-			public void onGamepadRelepased(JTranscInput.GamepadInfo info) {
 			}
 
 			@Override
@@ -144,18 +132,6 @@ public class JTranscGame {
 			@Override
 			public void onMouseScroll(JTranscInput.MouseInfo info) {
 				game.setMouseInfo(info);
-			}
-
-			@Override
-			public void onTouchDown(JTranscInput.TouchInfo info) {
-			}
-
-			@Override
-			public void onTouchDrag(JTranscInput.TouchInfo info) {
-			}
-
-			@Override
-			public void onTouchUp(JTranscInput.TouchInfo info) {
 			}
 		});
 	}
