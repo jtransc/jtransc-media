@@ -2,6 +2,7 @@
 *.iml
 *.ipr
 *.iws
+*.versionsBackup
 /out_java/
 /out.jar
 /target
