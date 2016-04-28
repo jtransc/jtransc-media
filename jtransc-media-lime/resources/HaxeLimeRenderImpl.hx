@@ -1,3 +1,5 @@
+import com.jtransc.media.JTranscWindow_;
+
 class HaxeLimeRenderImpl {
     static public inline var MASK_NONE = 0;
     static public inline var MASK_SHAPE = 1;
@@ -15,27 +17,27 @@ class HaxeLimeRenderImpl {
     static public inline var BLEND_MAX:Int = 17;
 
     public function getVirtualActualWidth() {
-        return jtransc.media.JTranscWindow_.getVirtualActualWidth__D();
+        return JTranscWindow_.getVirtualActualWidth__D();
     }
 
     public function getVirtualActualHeight() {
-        return jtransc.media.JTranscWindow_.getVirtualActualHeight__D();
+        return JTranscWindow_.getVirtualActualHeight__D();
     }
 
     public function getScreenWidth() {
-        return jtransc.media.JTranscWindow_.getScreenWidth__D();
+        return JTranscWindow_.getScreenWidth__D();
     }
 
     public function getScreenHeight() {
-        return jtransc.media.JTranscWindow_.getScreenHeight__D();
+        return JTranscWindow_.getScreenHeight__D();
     }
 
     public function getVirtualScaleX() {
-        return jtransc.media.JTranscWindow_.getVirtualScaleX__D();
+        return JTranscWindow_.getVirtualScaleX__D();
     }
 
     public function getVirtualScaleY() {
-        return jtransc.media.JTranscWindow_.getVirtualScaleY__D();
+        return JTranscWindow_.getVirtualScaleY__D();
     }
 
     public function createTexture(path:String, width:Int, height:Int):Int {

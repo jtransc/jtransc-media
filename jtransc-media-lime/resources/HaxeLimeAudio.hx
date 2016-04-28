@@ -60,7 +60,11 @@ class SoundWrapped {
         this.path = path;
         #if js
         	//this.audio = new js.html.Audio(HaxeLimeAssets.fixpath(path));
-        	untyped __js__('createjs.Sound.registerSound({0});', HaxeLimeAssets.fixpath(path));
+        	try {
+        	    untyped __js__('createjs.Sound.registerSound({0});', HaxeLimeAssets.fixpath(path));
+            } catch (e:Dynamic) {
+                trace(e);
+            }
         #else
 			var future = HaxeLimeAssets.loadAudioBuffer(path);
 			future.onComplete(function(buffer) {

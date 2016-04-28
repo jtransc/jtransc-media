@@ -3,7 +3,7 @@ import lime.graphics.Renderer;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.*;
 import lime.utils.*;
-import lime.math.com.jtransc.media.lwjgl.Matrix4;
+import lime.math.Matrix4;
 
 class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
     public var gl:GLRenderContext;
@@ -140,9 +140,9 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         textureIndices.push(id);
     }
 
-    private var lastClip = new lime.math.com.jtransc.media.lwjgl.Rectangle(0, 0, 8196, 8196);
-    private var currentScissors = new lime.math.com.jtransc.media.lwjgl.Rectangle(0, 0, 8196, 8196);
-    private var FULL_SCISSORS = new lime.math.com.jtransc.media.lwjgl.Rectangle(0, 0, 8196, 8196);
+    private var lastClip = new lime.math.Rectangle(0, 0, 8196, 8196);
+    private var currentScissors = new lime.math.Rectangle(0, 0, 8196, 8196);
+    private var FULL_SCISSORS = new lime.math.Rectangle(0, 0, 8196, 8196);
 
     override public function render(
         _vertices:haxe.io.Float32Array, vertexCount:Int,
@@ -169,7 +169,7 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
 
         gl.useProgram(glProgram);
 
-        var matrix = com.jtransc.media.lwjgl.Matrix4.createOrtho(0, virtualActualWidth, virtualActualHeight, 0, -1000, 1000);
+        var matrix = Matrix4.createOrtho(0, virtualActualWidth, virtualActualHeight, 0, -1000, 1000);
         gl.uniformMatrix4fv(glMatrixUniform, false, matrix);
         gl.uniform1i(glImageUniform, 0);
 
