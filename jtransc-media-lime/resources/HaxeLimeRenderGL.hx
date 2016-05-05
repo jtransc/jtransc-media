@@ -102,6 +102,9 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         return true;
     }
 
+	@:access(lime.graphics.opengl.GL)
+	@:access(lime.graphics.ImageBuffer)
+
     override public function _createTexture(image:lime.graphics.Image, imageFuture:lime.app.Future<lime.graphics.Image>, width:Int, height:Int):Int {
         var id = textureIndices.pop();
         var glTexture = textures[id] = gl.createTexture();
@@ -123,7 +126,16 @@ class HaxeLimeRenderGL extends HaxeLimeRenderImpl {
         if (imageFuture != null) {
             imageFuture.onComplete(function(image) {
                 gl.bindTexture(gl.TEXTURE_2D, glTexture);
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.buffer.width, image.buffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image.data);
+                var textureBounds = false;
+                #if js
+                if (image != null && image.buffer != null && image.buffer.__srcImage != null) {
+	                textureBounds = true;
+                	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image.buffer.__srcImage);
+                }
+                #end
+                if (!textureBounds) {
+                	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.buffer.width, image.buffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image.data);
+                }
                 gl.bindTexture(gl.TEXTURE_2D, null);
             });
         }
