@@ -1,12 +1,12 @@
 package com.jtransc.media.lime;
 
-import com.jtransc.media.*;
 import com.jtransc.FastMemory;
 import com.jtransc.annotation.haxe.HaxeAddFiles;
 import com.jtransc.annotation.haxe.HaxeAddLibraries;
 import com.jtransc.annotation.haxe.HaxeCustomMain;
 import com.jtransc.annotation.haxe.HaxeMethodBody;
 import com.jtransc.io.JTranscSyncIO;
+import com.jtransc.media.*;
 
 @HaxeAddFiles({
 	"AGALMiniAssembler.hx",
@@ -42,11 +42,11 @@ public class JTranscLime {
 
 	static private class JTranscEventLoopLimeImpl implements JTranscEventLoop.Impl {
 		@Override
-		@HaxeMethodBody("HaxeLimeJTranscApplication.loopInit(function() { p0.run__V(); });")
+		@HaxeMethodBody("HaxeLimeJTranscApplication.loopInit(function() { p0.#METHOD:java.lang.Runnable:run#(); });")
 		native public void init(Runnable init);
 
 		@Override
-		@HaxeMethodBody("HaxeLimeJTranscApplication.loopLoop(function() { p0.run__V(); }, function() { p1.run__V(); });")
+		@HaxeMethodBody("HaxeLimeJTranscApplication.loopLoop(function() { p0.#METHOD:java.lang.Runnable:run#(); }, function() { p1.#METHOD:java.lang.Runnable:run#(); });")
 		native public void loop(Runnable update, Runnable render);
 	}
 
@@ -91,7 +91,7 @@ public class JTranscLime {
 		@HaxeMethodBody("" +
 			"var futureBytes = HaxeLimeAssets.loadBytes(p0._str);\n" +
 			"futureBytes.onComplete(function(bytes) {\n" +
-			"   p1.handler_Ljava_lang_Throwable_Ljava_lang_Object__V(null, HaxeByteArray.fromBytes(bytes));\n" +
+			"   p1.#METHOD:com.jtransc.media.JTranscCallback:handler#(null, HaxeByteArray.fromBytes(bytes));\n" +
 			"});\n" +
 			"\n"
 		)
@@ -117,9 +117,7 @@ public class JTranscLime {
 		@HaxeMethodBody("" +
 			"var bytes = HaxeLimeAssets.getBytes(p0._str); // LIME >= 2.8\n" +
 			"if (bytes == null) return null;\n" +
-			"var obj = new com.jtransc.io.JTranscSyncIO_ByteStream_();\n" +
-			"obj.com_jtransc_io_JTranscSyncIO_ByteStream_init___B_V(HaxeByteArray.fromBytes(bytes));\n" +
-			"return obj;\n"
+			"return #CONSTRUCTOR:com.jtransc.io.JTranscSyncIO$ByteStream:([B)V#(HaxeByteArray.fromBytes(bytes));\n"
 		)
 		private JTranscSyncIO.ImplStream _open(String path, int mode) {
 			return new JTranscSyncIO.ByteStream(new byte[0]);
