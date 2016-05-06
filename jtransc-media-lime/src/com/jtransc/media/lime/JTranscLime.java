@@ -1,14 +1,11 @@
 package com.jtransc.media.lime;
 
 import com.jtransc.FastMemory;
-import com.jtransc.annotation.haxe.HaxeAddFiles;
-import com.jtransc.annotation.haxe.HaxeAddLibraries;
-import com.jtransc.annotation.haxe.HaxeCustomMain;
-import com.jtransc.annotation.haxe.HaxeMethodBody;
+import com.jtransc.annotation.haxe.*;
 import com.jtransc.io.JTranscSyncIO;
 import com.jtransc.media.*;
 
-@HaxeAddFiles({
+@HaxeAddFilesTemplate({
 	"AGALMiniAssembler.hx",
 	"HaxeLimeAssets.hx",
 	"HaxeLimeAudio.hx",
@@ -18,6 +15,9 @@ import com.jtransc.media.*;
 	"HaxeLimeRenderGL.hx",
 	"HaxeLimeRenderImpl.hx",
 	"HaxeLimeIO.hx"
+})
+@HaxeAddFilesBeforeBuildTemplate({
+	"program.xml"
 })
 @HaxeCustomMain("" +
 	"package $entryPointPackage;\n" +
@@ -29,7 +29,30 @@ import com.jtransc.media.*;
 	"    }\n" +
 	"}\n"
 )
-@HaxeAddLibraries({"lime:2.9.1"})
+@HaxeAddSubtargetList({
+	@HaxeAddSubtarget(name = "android"),
+	@HaxeAddSubtarget(name = "blackberry"),
+	@HaxeAddSubtarget(name = "desktop"),
+	@HaxeAddSubtarget(name = "emscripten"),
+	@HaxeAddSubtarget(name = "flash", alias = { "swf", "as3" }),
+	@HaxeAddSubtarget(name = "html5", alias = { "js" }),
+	@HaxeAddSubtarget(name = "ios"),
+	@HaxeAddSubtarget(name = "linux"),
+	@HaxeAddSubtarget(name = "mac"),
+	@HaxeAddSubtarget(name = "tizen"),
+	@HaxeAddSubtarget(name = "tvos"),
+	@HaxeAddSubtarget(name = "webos"),
+	@HaxeAddSubtarget(name = "windows"),
+	@HaxeAddSubtarget(name = "neko")
+})
+@HaxeCustomBuildCommandLine({
+	"haxelib", "run", "lime",
+	"{% if debug %}-debug{% end %}",
+	"build", "{{ actualSubtarget.name }}"
+})
+@HaxeAddLibraries({
+	"lime:2.9.1"
+})
 public class JTranscLime {
 	static public void init() {
 		JTranscRender.impl = new JTranscRenderLimeImpl();
@@ -91,7 +114,7 @@ public class JTranscLime {
 		@HaxeMethodBody("" +
 			"var futureBytes = HaxeLimeAssets.loadBytes(p0._str);\n" +
 			"futureBytes.onComplete(function(bytes) {\n" +
-			"   p1.#METHOD:com.jtransc.media.JTranscCallback:handler#(null, HaxeByteArray.fromBytes(bytes));\n" +
+			"   p1.#METHOD:com.jtransc.media.JTranscCallback:handler#(null, HaxeArrayByte.fromBytes(bytes));\n" +
 			"});\n" +
 			"\n"
 		)
@@ -117,7 +140,7 @@ public class JTranscLime {
 		@HaxeMethodBody("" +
 			"var bytes = HaxeLimeAssets.getBytes(p0._str); // LIME >= 2.8\n" +
 			"if (bytes == null) return null;\n" +
-			"return #CONSTRUCTOR:com.jtransc.io.JTranscSyncIO$ByteStream:([B)V#(HaxeByteArray.fromBytes(bytes));\n"
+			"return #CONSTRUCTOR:com.jtransc.io.JTranscSyncIO$ByteStream:([B)V#(HaxeArrayByte.fromBytes(bytes));\n"
 		)
 		private JTranscSyncIO.ImplStream _open(String path, int mode) {
 			return new JTranscSyncIO.ByteStream(new byte[0]);

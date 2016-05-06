@@ -3,7 +3,7 @@ class HaxeLimeIO {
         #if sys
         try {
             var bytes = sys.io.File.getBytes(path);
-            callback(null, HaxeByteArray.fromBytes(bytes));
+            callback(null, HaxeArrayByte.fromBytes(bytes));
         } catch (e:Dynamic) {
             callback(newException('Cannot read file "$path"'), null);
         }
@@ -13,7 +13,7 @@ class HaxeLimeIO {
         xhr.responseType = js.html.XMLHttpRequestResponseType.ARRAYBUFFER;
         xhr.onload = function(e) {
             var bytes = new haxe.io.UInt8Array(xhr.response);
-            callback(null, HaxeByteArray.fromUInt8Array(bytes));
+            callback(null, HaxeArrayByte.fromUInt8Array(bytes));
         };
         xhr.onerror = function(e) {
             callback(newException('Cannot read file "$path"'), null);

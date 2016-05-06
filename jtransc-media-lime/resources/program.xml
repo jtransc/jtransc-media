@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta title="{{ title }}" package="{{ package }}" version="{{ version }}" company="{{ company }}" />
+	<app main="{{ entryPointClass }}" path="out" file="{{ name }}" />
+	<app swf-version="11.8" />
+
+	<window width="{{ initialWidth }}" height="{{ initialHeight }}" background="#FFFFFF" />
+	<window fullscreen="false" resizable="true" borderless="false" vsync="false" hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="false" stencil-buffer="true" orientation="{{ orientation }}" highdpi="true" allow-high-dpi="true" />
+	<window fullscreen="true" if="mobile" />
+	<window fps="60" unless="js" />
+	<window fps="0" if="js" />
+	<window width="0" height="0" if="html5" />
+
+	{% for flag in haxeExtraFlags %}
+		<haxeflag name="{{ flag.first }}" value="{{ flag.second }}" />
+	{% end %}
+
+	{% for define in haxeExtraDefines %}
+		<haxedef name="{{ define }}" />
+	{% end %}
+
+	<source path="src" />
+	<assets path="{{ tempAssetsDir }}" rename="assets" embed="{{ embedResources }}" exclude="*.ttf|*.fla|*.zip|*.swf" />
+
+	{% if hasIcon %}
+		<icon path="{{ settings.icon }}" />
+	{% end %}
+
+	<haxelib name="lime" />
+	{% for lib in libraries %}
+		{% if version != null %}
+			<haxelib name="{{ lib.name }}" version="{{ lib.version }}" />
+		{% else %}
+			<haxelib name="{{ lib.name }}" />
+		{% end %}
+	{% end %}
+</project>

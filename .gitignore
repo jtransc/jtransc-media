@@ -2,6 +2,8 @@
 *.iml
 *.ipr
 *.iws
+*.js
+program.haxe.php
 *.versionsBackup
 /out_java/
 /out.jar

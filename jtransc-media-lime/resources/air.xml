@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<application xmlns="http://ns.adobe.com/air/application/18.0">
+	<id>program</id>
+	<version>0.0</version>
+	<versionNumber>0</versionNumber>
+	<filename>{{ name }}</filename>
+	<initialWindow>
+		<content>{{ name }}.swf</content>
+		<visible>true</visible>
+		<aspectRatio>landscape</aspectRatio>
+		<autoOrients>true</autoOrients>
+		<fullScreen>true</fullScreen>
+		<renderMode>direct</renderMode>
+		<depthAndStencil>true</depthAndStencil>
+	</initialWindow>
+</application>
