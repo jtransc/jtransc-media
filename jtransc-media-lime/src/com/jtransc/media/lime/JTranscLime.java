@@ -3,6 +3,7 @@ package com.jtransc.media.lime;
 import com.jtransc.FastMemory;
 import com.jtransc.annotation.haxe.*;
 import com.jtransc.io.JTranscSyncIO;
+import com.jtransc.kotlin.JTranscKotlinReflectStripper;
 import com.jtransc.media.*;
 
 @HaxeAddFilesTemplate({
@@ -55,6 +56,7 @@ import com.jtransc.media.*;
 })
 public class JTranscLime {
 	static public void init() {
+		JTranscKotlinReflectStripper.init();
 		JTranscRender.impl = new JTranscRenderLimeImpl();
 		JTranscAudio.impl = new JTranscAudioLimeImpl();
 		JTranscIO.impl = new JTranscIOLimeImpl();
