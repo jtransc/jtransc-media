@@ -11,6 +11,9 @@
 	<window fps="0" if="js" />
 	<window width="0" height="0" if="html5" />
 
+	<set name="BUILD_DIR" value="export/debug/" if="debug" />
+	<set name="BUILD_DIR" value="export/release/" if="release" />
+
 	{% for flag in haxeExtraFlags %}
 		<haxeflag name="{{ flag.first }}" value="{{ flag.second }}" />
 	{% end %}

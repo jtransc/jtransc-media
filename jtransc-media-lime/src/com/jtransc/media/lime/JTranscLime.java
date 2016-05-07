@@ -48,8 +48,8 @@ import com.jtransc.media.*;
 })
 @HaxeCustomBuildCommandLine({
 	"haxelib", "run", "lime",
-	"{% if debug %}-debug{% end %}",
-	"build", "{{ actualSubtarget.name }}"
+	"build", "{{ actualSubtarget.name }}",
+	"{% if debug %}-debug{% else %}-release{% end %}"
 })
 @HaxeAddLibraries({
 	"lime:2.9.1"
