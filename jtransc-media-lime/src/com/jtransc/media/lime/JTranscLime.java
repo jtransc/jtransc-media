@@ -21,12 +21,12 @@ import com.jtransc.media.*;
 	"program.xml"
 })
 @HaxeCustomMain("" +
-	"package $entryPointPackage;\n" +
-	"class $entryPointSimpleName extends HaxeLimeJTranscApplication {\n" +
+	"package {{ entryPointPackage }};\n" +
+	"class {{ entryPointSimpleName }} extends HaxeLimeJTranscApplication {\n" +
 	"    public function new() {\n" +
 	"        super();\n" +
-	"        $inits\n" +
-	"        $mainClass.$mainMethod(HaxeNatives.strArray(HaxeNatives.args()));\n" +
+	"        {{ inits }}\n" +
+	"        {{ mainClass }}.{{ mainMethod }}(HaxeNatives.strArray(HaxeNatives.args()));\n" +
 	"    }\n" +
 	"}\n"
 )
