@@ -67,11 +67,11 @@ public class JTranscLime {
 
 	static private class JTranscEventLoopLimeImpl implements JTranscEventLoop.Impl {
 		@Override
-		@HaxeMethodBody("HaxeLimeJTranscApplication.loopInit(function() { p0.#METHOD:java.lang.Runnable:run#(); });")
+		@HaxeMethodBody("HaxeLimeJTranscApplication.loopInit(function() { p0.{% METHOD java.lang.Runnable:run %}(); });")
 		native public void init(Runnable init);
 
 		@Override
-		@HaxeMethodBody("HaxeLimeJTranscApplication.loopLoop(function() { p0.#METHOD:java.lang.Runnable:run#(); }, function() { p1.#METHOD:java.lang.Runnable:run#(); });")
+		@HaxeMethodBody("HaxeLimeJTranscApplication.loopLoop(function() { p0.{% METHOD java.lang.Runnable:run %}(); }, function() { p1.{% METHOD java.lang.Runnable:run %}(); });")
 		native public void loop(Runnable update, Runnable render);
 	}
 
@@ -116,7 +116,7 @@ public class JTranscLime {
 		@HaxeMethodBody("" +
 			"var futureBytes = HaxeLimeAssets.loadBytes(p0._str);\n" +
 			"futureBytes.onComplete(function(bytes) {\n" +
-			"   p1.#METHOD:com.jtransc.media.JTranscCallback:handler#(null, HaxeArrayByte.fromBytes(bytes));\n" +
+			"   p1.{% METHOD com.jtransc.media.JTranscCallback:handler %}(null, HaxeArrayByte.fromBytes(bytes));\n" +
 			"});\n" +
 			"\n"
 		)
@@ -142,7 +142,7 @@ public class JTranscLime {
 		@HaxeMethodBody("" +
 			"var bytes = HaxeLimeAssets.getBytes(p0._str); // LIME >= 2.8\n" +
 			"if (bytes == null) return null;\n" +
-			"return #CONSTRUCTOR:com.jtransc.io.JTranscSyncIO$ByteStream:([B)V#(HaxeArrayByte.fromBytes(bytes));\n"
+			"return {% CONSTRUCTOR com.jtransc.io.JTranscSyncIO$ByteStream:([B)V %}(HaxeArrayByte.fromBytes(bytes));\n"
 		)
 		private JTranscSyncIO.ImplStream _open(String path, int mode) {
 			return new JTranscSyncIO.ByteStream(new byte[0]);

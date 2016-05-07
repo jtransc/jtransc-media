@@ -14,12 +14,12 @@ class HaxeLimeRenderImpl {
     static public inline var BLEND_BELOW:Int = 16;
     static public inline var BLEND_MAX:Int = 17;
 
-    public function getVirtualActualWidth() return #SMETHOD:com.jtransc.media.JTranscWindow:getVirtualActualWidth#();
-    public function getVirtualActualHeight() return #SMETHOD:com.jtransc.media.JTranscWindow:getVirtualActualHeight#();
-    public function getScreenWidth() return #SMETHOD:com.jtransc.media.JTranscWindow:getScreenWidth#();
-    public function getScreenHeight() return #SMETHOD:com.jtransc.media.JTranscWindow:getScreenHeight#();
-    public function getVirtualScaleX() return #SMETHOD:com.jtransc.media.JTranscWindow:getVirtualScaleX#();
-    public function getVirtualScaleY() return #SMETHOD:com.jtransc.media.JTranscWindow:getVirtualScaleY#();
+    public function getVirtualActualWidth() return {% SMETHOD com.jtransc.media.JTranscWindow:getVirtualActualWidth %}();
+    public function getVirtualActualHeight() return {% SMETHOD com.jtransc.media.JTranscWindow:getVirtualActualHeight %}();
+    public function getScreenWidth() return {% SMETHOD com.jtransc.media.JTranscWindow:getScreenWidth %}();
+    public function getScreenHeight() return {% SMETHOD com.jtransc.media.JTranscWindow:getScreenHeight %}();
+    public function getVirtualScaleX() return {% SMETHOD com.jtransc.media.JTranscWindow:getVirtualScaleX %}();
+    public function getVirtualScaleY() return {% SMETHOD com.jtransc.media.JTranscWindow:getVirtualScaleY %}();
 
     public function createTexture(path:String, width:Int, height:Int):Int {
         trace('HaxeLimeRenderImpl.createTexture($path)');
