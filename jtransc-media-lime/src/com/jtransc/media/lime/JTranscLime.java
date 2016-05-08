@@ -15,7 +15,8 @@ import com.jtransc.media.*;
 	"HaxeLimeRenderFlash.hx",
 	"HaxeLimeRenderGL.hx",
 	"HaxeLimeRenderImpl.hx",
-	"HaxeLimeIO.hx"
+	"HaxeLimeIO.hx",
+	"HaxeLimeLanguage.hx"
 })
 @HaxeAddFilesBeforeBuildTemplate({
 	"program.xml"
@@ -64,6 +65,11 @@ public class JTranscLime {
 		JTranscEventLoop.impl = new JTranscEventLoopLimeImpl();
 		JTranscSyncIO.impl = new JTranscSyncIOLimeImpl(JTranscSyncIO.impl);
 		JTranscWindow.referenced();
+	}
+
+	static public class Utils {
+		@HaxeMethodBody("return N.str(HaxeLimeLanguage.getLanguage());")
+		native static public String getLanguage();
 	}
 
 	static private class JTranscEventLoopLimeImpl implements JTranscEventLoop.Impl {
