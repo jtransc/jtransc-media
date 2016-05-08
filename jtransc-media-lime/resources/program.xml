@@ -29,6 +29,16 @@
 		<icon path="{{ settings.icon }}" />
 	{% end %}
 
+	{% if extra.certificate.path %}
+	{% debug "extra.certificate.path: " + extra.certificate.path %}
+	<certificate
+		path="{{ extra.certificate.path }}"
+		{%if extra.certificate.password %} password="{{ extra.certificate.password }}"{% end %}
+		{%if extra.certificate.alias %} alias="{{ extra.certificate.alias }}"{% end %}
+		{%if extra.certificate.password %} alias-password="{{ extra.certificate.password }}"{% end %}
+	/>
+	{% end %}
+
 	<haxelib name="lime" />
 	{% for lib in libraries %}
 		{% if version != null %}
