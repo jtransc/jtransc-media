@@ -48,10 +48,7 @@ import com.jtransc.media.*;
 	@HaxeAddSubtarget(name = "neko")
 })
 @HaxeCustomBuildCommandLine({
-	"haxelib", "run", "lime",
-	"build", "{{ actualSubtarget.name }}",
-	"{% if debug %}-debug{% else %}-release{% end %}",
-	"-Dsource-header=0" // -Dsource-header=0
+	"@limebuild.cmd"
 })
 @HaxeAddLibraries({
 	"lime:2.9.1"

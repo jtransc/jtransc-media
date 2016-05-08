@@ -29,13 +29,13 @@
 		<icon path="{{ settings.icon }}" />
 	{% end %}
 
-	{% if extra.certificate.path %}
-	{% debug "extra.certificate.path: " + extra.certificate.path %}
+	{% if extra.certificate_path %}
+	{% debug "extra.certificate_path: " + extra.certificate_path %}
 	<certificate
-		path="{{ extra.certificate.path }}"
-		{%if extra.certificate.password %} password="{{ extra.certificate.password }}"{% end %}
-		{%if extra.certificate.alias %} alias="{{ extra.certificate.alias }}"{% end %}
-		{%if extra.certificate.password %} alias-password="{{ extra.certificate.password }}"{% end %}
+		path="{{ extra.certificate_path }}"
+		{%if extra.certificate_password %} password="{{ extra.certificate_password }}"{% end %}
+		{%if extra.certificate_alias %} alias="{{ extra.certificate_alias }}"{% end %}
+		{%if extra.certificate_password %} alias-password="{{ extra.certificate_password }}"{% end %}
 	/>
 	{% end %}
 
