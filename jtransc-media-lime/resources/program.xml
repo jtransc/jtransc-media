@@ -41,7 +41,7 @@
 
 	<haxelib name="lime" />
 	{% for lib in libraries %}
-		{% if version != null %}
+		{% if lib.version != null %}
 			<haxelib name="{{ lib.name }}" version="{{ lib.version }}" />
 		{% else %}
 			<haxelib name="{{ lib.name }}" />

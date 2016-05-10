@@ -73,14 +73,17 @@ class JTranscModule extends lime.app.Module {
         mouseInfo().{% FIELD com.jtransc.media.JTranscInput$MouseInfo:buttons %} &= ~(1 << button);
         inputImpl().{% METHOD com.jtransc.media.JTranscInput$Handler:onMouseUp %}(mouseInfo());
     }
+
     override public function onMouseWheel (window:Window, deltaX:Float, deltaY:Float):Void {
         inputImpl().{% METHOD com.jtransc.media.JTranscInput$Handler:onMouseWheel %}(Std.int(deltaY));
     }
+
     override public function onMouseDown(window:Window, x:Float, y:Float, button:Int):Void {
         mouseInfo().{% METHOD com.jtransc.media.JTranscInput$MouseInfo:setScreenXY %}(Std.int(x), Std.int(y));
         mouseInfo().{% FIELD com.jtransc.media.JTranscInput$MouseInfo:buttons %} |= 1 << button;
         inputImpl().{% METHOD com.jtransc.media.JTranscInput$Handler:onMouseDown %}(mouseInfo());
     }
+
     override public function onMouseMove(window:Window, x:Float, y:Float):Void {
         mouseInfo().{% METHOD com.jtransc.media.JTranscInput$MouseInfo:setScreenXY %}(Std.int(x), Std.int(y));
         inputImpl().{% METHOD com.jtransc.media.JTranscInput$Handler:onMouseMove %}(mouseInfo());
