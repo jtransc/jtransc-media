@@ -58,7 +58,7 @@ class HaxeLimeJTranscApplication extends lime.app.Application {
     public function new() {
         super();
         HaxeLimeJTranscApplication.instance = this;
-        {% SINIT com.jtransc.media.JTranscInput %};
+        {% SINIT com.jtransc.media.JTranscInput %}
         addModule(new JTranscModule());
     }
 }
