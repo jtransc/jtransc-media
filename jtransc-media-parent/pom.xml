@@ -32,7 +32,7 @@
 
     <groupId>com.jtransc.media</groupId>
     <artifactId>jtransc-media-parent</artifactId>
-    <version>0.2.5</version>
+    <version>0.2.6</version>
     <packaging>pom</packaging>
 
     <name>jtransc media parent</name>

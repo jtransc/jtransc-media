@@ -21,7 +21,7 @@ public class JTranscGame {
 	public final Stage stage;
 	public final Sprite root;
 
-	private int lastTime = -1;
+	private double lastTime = -1;
 	final public Point mouse = new Point(-1000, -1000);
 	public int mouseButtons = 0;
 
@@ -75,9 +75,9 @@ public class JTranscGame {
 				JTranscEventLoop.loop(new Runnable() {
 					@Override
 					public void run() {
-						int currentTime = JTranscSystem.stamp();
+						double currentTime = JTranscSystem.stamp();
 						if (game.lastTime < 0) game.lastTime = currentTime;
-						int elapsed = currentTime - game.lastTime;
+						int elapsed = (int) (currentTime - game.lastTime);
 						stage.update(elapsed);
 						game.lastTime = currentTime;
 					}
