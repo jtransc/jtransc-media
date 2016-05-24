@@ -223,6 +223,13 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
         _indices:haxe.io.UInt16Array, indexCount:Int,
         _batches:haxe.io.Int32Array, batchCount:Int
     ) {
+		var virtualActualWidth = getVirtualActualWidth();
+		var virtualActualHeight = getVirtualActualHeight();
+		var screenWidth = getScreenWidth();
+		var screenHeight = getScreenHeight();
+		var virtualScaleX = getVirtualScaleX();
+		var virtualScaleY = getVirtualScaleY();
+
         var context = this.context;
 
         if (context == null) {
@@ -261,9 +268,6 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
             //context.setSamplerStateAt(0, Context3DWrapMode.CLAMP, Context3DTextureFilter.LINEAR, Context3DMipFilter.MIPNONE);
 
 			lastClip.setTo(0, 0, 8192, 8192);
-
-			var virtualScaleX = 1.0;
-			var virtualScaleY = 1.0;
 
 			var lastMaskType = -1;
 			var lastStencilIndex = -1;
