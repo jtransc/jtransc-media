@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<application xmlns="http://ns.adobe.com/air/application/18.0">
-	<id>program</id>
-	<version>0.0</version>
-	<versionNumber>0</versionNumber>
+<application xmlns="http://ns.adobe.com/air/application/19.0">
+	<id>{{ package }}.{{ name|lower }}</id>
 	<filename>{{ name }}</filename>
+	<name>{{ title }}</name>
+	<versionNumber>{{ version }}</versionNumber>
+	<copyright>{{ company }}</copyright>
 	<initialWindow>
 		<content>{{ name }}.swf</content>
+		<title>{{ title }}</title>
+		<systemChrome>standard</systemChrome>
+		<transparent>false</transparent>
 		<visible>true</visible>
+		<minimizable>true</minimizable>
+		<maximizable>true</maximizable>
+		<resizable>true</resizable>
+
 		<aspectRatio>landscape</aspectRatio>
 		<autoOrients>true</autoOrients>
 		<fullScreen>true</fullScreen>
 		<renderMode>direct</renderMode>
 		<depthAndStencil>true</depthAndStencil>
 	</initialWindow>
+	<supportedLanguages>en es fr it pt</supportedLanguages>
+	<icon>
+		<image72x72>icons/icon-72.png</image72x72>
+		<image144x144>icons/icon-144.png</image144x144>
+		<image512x512>icons/icon-512.png</image512x512>
+	</icon>
+	<iPhone>
+		<requestedDisplayResolution>high</requestedDisplayResolution>
+	</iPhone>
+	<android>
+		<colorDepth>32bit</colorDepth>
+	</android>
+	<extensions>
+	</extensions>
 </application>
