@@ -41,11 +41,10 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
             context = stage.stage3Ds[0].context3D;
             context.enableErrorChecking = DEBUG;
             context.configureBackBuffer(W, H, 4, true);
-            //context.configureBackBuffer(640, 480, 4, true);
 
             var assembler = new AGALMiniAssembler();
 
-            var shaderInfo = createShaderInfo(true, false, true, false);
+            var shaderInfo = createShaderInfo(true, false, true, true);
 
             textureProgram = context.createProgram();
             textureProgram.upload(
@@ -230,7 +229,8 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
             trace('context == null');
             return;
         }
-        context.clear(0.2, 0.2, 0.2, 1);
+        var c_r = 0, c_g = 0, c_b = 0, c_a = 1;
+        context.clear(c_r, c_g, c_b, c_a, 1, 0, Context3DClearMask.ALL);
 
         if (batchCount > 0) {
             var verticesOut = new Vector<Float>(vertexCount * 6);
@@ -264,6 +264,9 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 
 			var virtualScaleX = 1.0;
 			var virtualScaleY = 1.0;
+
+			var lastMaskType = -1;
+			var lastStencilIndex = -1;
 
             for (batchId in 0 ... batchCount) {
                 var batchOffset = batchId * 16;
@@ -316,45 +319,35 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 					context.setScissorRectangle(CLIP_RECT);
 				}
 
-				/*
 				// Mask/Stencil
-				if ((lastMaskType != currentMaskType) || (lastStencilIndex != currentStencilIndex)) {
-					lastMaskType = currentMaskType;
-					lastStencilIndex = currentStencilIndex;
-					switch (currentMaskType) {
-						case PrenderBatch.MASK_TYPE_NONE:
-							if (debugBatch) batchReasons.push(PrenderBatchReason.MASK_END);
+				if ((lastMaskType != maskType) || (lastStencilIndex != stencilIndex)) {
+					lastMaskType = maskType;
+					lastStencilIndex = stencilIndex;
+					switch (maskType) {
+						case HaxeLimeRenderImpl.MASK_NONE:
 							context.setColorMask(true, true, true, true);
 							context.setStencilActions(
 								Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL,
 								Context3DStencilAction.KEEP, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP
 							);
 							context.setStencilReferenceValue(0, 0, 0);
-							break;
-						case PrenderBatch.MASK_TYPE_SHAPE:
-							if (debugBatch) batchReasons.push(PrenderBatchReason.MASK_START);
+						case HaxeLimeRenderImpl.MASK_SHAPE:
 							context.setColorMask(false, false, false, false);
 							context.setStencilActions(
 								Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS,
 								Context3DStencilAction.SET, Context3DStencilAction.SET, Context3DStencilAction.SET
 							);
-							context.setStencilReferenceValue(currentStencilIndex, 0xFF, 0xFF);
-							break;
-						case PrenderBatch.MASK_TYPE_CONTENT:
-							if (debugBatch) batchReasons.push(PrenderBatchReason.MASK_CONTENT);
+							context.setStencilReferenceValue(stencilIndex, 0xFF, 0xFF);
+						case HaxeLimeRenderImpl.MASK_CONTENT:
 							context.setColorMask(true, true, true, true);
-							context.setStencilReferenceValue(currentStencilIndex, 0xFF, 0x00);
+							context.setStencilReferenceValue(stencilIndex, 0xFF, 0x00);
 							context.setStencilActions(
 								Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL,
 								Context3DStencilAction.KEEP, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP
 							);
-							break;
 						default:
-							if (debugBatch) batchReasons.push("mask unknown");
-							break;
 					}
 				}
-				*/
 
                 //trace(batch.indexStart + ' - ' + batch.count);
                 context.drawTriangles(indexBuffer, indexStart, triangleCount);
