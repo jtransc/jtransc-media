@@ -6,6 +6,7 @@ import flash.display3D.textures.*;
 import flash.utils.*;
 import flash.geom.Matrix3D;
 import flash.Lib;
+import flash.geom.Rectangle;
 import haxe.ds.Vector;
 import lime.Assets;
 
@@ -17,6 +18,9 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
     private var textures:Array<RectangleTexture>;
     private var textureIndices:Array<Int>;
     static public inline var DEBUG:Bool = true;
+	static private var CLIP_RECT = new Rectangle();
+	private var lastClip:Rectangle = new Rectangle();
+	private var batchClip:Rectangle = new Rectangle();
 
     public function new(rootSprite:Sprite) {
         this.rootSprite = rootSprite;
@@ -41,28 +45,12 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 
             var assembler = new AGALMiniAssembler();
 
+            var shaderInfo = createShaderInfo(true, false, true, false);
+
             textureProgram = context.createProgram();
             textureProgram.upload(
-                assembler.assemble(Context3DProgramType.VERTEX, [
-                    "m44 op, va0, vc0",
-                    "mov v0, va1",
-					"mov v1, va2",
-					"mov vt0, va3",
-					"mul vt0, vt0, vc4.w",
-					"sub vt0, vt0, vc4.z",
-					"mov v2, vt0"
-                ].join("\n")),
-                assembler.assemble(Context3DProgramType.FRAGMENT, [
-                    "tex ft0, v0.xyxx, fs0 <2d, linear, mipdisable, clamp>",
-					"div ft0.xyz, ft0.xyz, ft0.w", // tint, premultiplied
-					"mul ft0, ft0, v1", // tint
-					"add ft0, ft0, v2", // tint
-					"mul ft0.xyz, ft0.xyz, ft0.w", // tint, premultiplied
-					"sge ft1.x, fc0.y, ft0.w", // inmask
-					"neg ft1.x, ft1.x", // inmask
-					"kil ft1.x", // inmask
-					"mov oc, ft0"
-                ].join("\n"))
+                assembler.assemble(Context3DProgramType.VERTEX, shaderInfo.vertex.join("\n")),
+                assembler.assemble(Context3DProgramType.FRAGMENT, shaderInfo.fragment.join("\n"))
             );
         }
         stage.stage3Ds[0].addEventListener(flash.events.Event.CONTEXT3D_CREATE, __init);
@@ -73,6 +61,76 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
             //render(renderer);
         });
     }
+
+    static private function createShaderInfo(texture:Bool, compressed:Bool, tint:Bool, inmask:Bool):TextureInfo {
+		var vertex = [];
+		var fragment = [];
+		var usePos = true;
+		var useTex = false;
+		var useCol1 = false;
+		var useCol2 = false;
+		var useCol3 = false;
+		var premultiplied = !compressed;
+
+		//tint = false;
+
+		///////////////////////////////////
+		// VERTEX
+		///////////////////////////////////
+		vertex.push("m44 op, va0, vc0");
+		if (texture) {
+			useTex = true;
+			vertex.push("mov v0, va1");
+			if (tint) {
+				useCol1 = true;
+				useCol2 = true;
+				//useCol3 = true;
+				vertex.push("mov v1, va2");
+				vertex.push("mov vt0, va3");
+				vertex.push("mul vt0, vt0, vc4.w");
+				vertex.push("sub vt0, vt0, vc4.z");
+				vertex.push("mov v2, vt0");
+			}
+
+		} else {
+			vertex.push("mov v0, va2");
+			useCol1 = true;
+		}
+
+		///////////////////////////////////
+		// FRAGMENT
+		///////////////////////////////////
+		if (texture) {
+			if (compressed) {
+				fragment.push("tex ft0, v0.xyxx, fs0 <2d linear mipdisable clamp dxt5>");
+			} else {
+				fragment.push("tex ft0, v0.xyxx, fs0 <2d linear mipdisable clamp>");
+			}
+
+			if (tint) {
+				if (premultiplied) fragment.push("div ft0.xyz, ft0.xyz, ft0.w");
+				fragment.push("mul ft0, ft0, v1");
+				fragment.push("add ft0, ft0, v2");
+				if (premultiplied) fragment.push("mul ft0.xyz, ft0.xyz, ft0.w");
+			}
+
+			if (inmask) {
+				fragment.push("sge ft1.x, fc0.y, ft0.w");
+				fragment.push("neg ft1.x, ft1.x");
+				fragment.push("kil ft1.x");
+			}
+
+			fragment.push("mov oc, ft0");
+		} else {
+			fragment.push("mov oc, v0");
+		}
+
+		return {
+			vertex: vertex,
+			fragment: fragment,
+			options: [usePos, useTex, useCol1, useCol2, useCol3]
+		};
+	}
 
     private static var FRAGMENT_CONSTANTS = Vector.fromArrayCopy([
         -1,  // fc0.x
@@ -131,14 +189,12 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
         textures[id] = texture;
         if (image != null) {
             var bitmapData = image.src;
-			#if flash
 			if (bitmapData == null) {
 				var data = image.buffer.data.toBytes().getData();
 				var bmp:flash.display.BitmapData = new BitmapData(image.width, image.height);
 				bmp.setPixels(bmp.rect, data);
 				bitmapData = bmp;
 			}
-			#end
             texture.uploadFromBitmapData(bitmapData);
         } else {
             texture.uploadFromBitmapData(new flash.display.BitmapData(width, height));
@@ -204,6 +260,11 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 
             //context.setSamplerStateAt(0, Context3DWrapMode.CLAMP, Context3DTextureFilter.LINEAR, Context3DMipFilter.MIPNONE);
 
+			lastClip.setTo(0, 0, 8192, 8192);
+
+			var virtualScaleX = 1.0;
+			var virtualScaleY = 1.0;
+
             for (batchId in 0 ... batchCount) {
                 var batchOffset = batchId * 16;
                 var indexStart    = _batches[batchOffset + 0];
@@ -212,10 +273,10 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
                 var blendMode     = _batches[batchOffset + 3];
                 var maskType      = _batches[batchOffset + 4];
                 var stencilIndex  = _batches[batchOffset + 5];
-                var scissorLeft   = _batches[batchOffset + 6];
-                var scissorTop    = _batches[batchOffset + 7];
-                var scissorRight  = _batches[batchOffset + 8];
-                var scissorBottom = _batches[batchOffset + 9];
+                batchClip.left    = _batches[batchOffset + 6];
+                batchClip.top     = _batches[batchOffset + 7];
+                batchClip.right   = _batches[batchOffset + 8];
+                batchClip.bottom  = _batches[batchOffset + 9];
 
                 var texture = textures[textureId];
 
@@ -223,7 +284,7 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
                 context.setProgram(textureProgram);
                 context.setTextureAt(0, texture);
 
-                var premultiplied = false;
+                var premultiplied = true;
                 if (!premultiplied) {
                     switch (blendMode) {
                         case HaxeLimeRenderImpl.BLEND_NONE    :context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
@@ -248,6 +309,53 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
                     }
                 }
 
+                // Scissors
+				if (!lastClip.equals(batchClip)) {
+					lastClip.copyFrom(batchClip);
+					CLIP_RECT.setTo(lastClip.x * virtualScaleX, lastClip.y * virtualScaleY, lastClip.width * virtualScaleX, lastClip.height * virtualScaleY);
+					context.setScissorRectangle(CLIP_RECT);
+				}
+
+				/*
+				// Mask/Stencil
+				if ((lastMaskType != currentMaskType) || (lastStencilIndex != currentStencilIndex)) {
+					lastMaskType = currentMaskType;
+					lastStencilIndex = currentStencilIndex;
+					switch (currentMaskType) {
+						case PrenderBatch.MASK_TYPE_NONE:
+							if (debugBatch) batchReasons.push(PrenderBatchReason.MASK_END);
+							context.setColorMask(true, true, true, true);
+							context.setStencilActions(
+								Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL,
+								Context3DStencilAction.KEEP, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP
+							);
+							context.setStencilReferenceValue(0, 0, 0);
+							break;
+						case PrenderBatch.MASK_TYPE_SHAPE:
+							if (debugBatch) batchReasons.push(PrenderBatchReason.MASK_START);
+							context.setColorMask(false, false, false, false);
+							context.setStencilActions(
+								Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS,
+								Context3DStencilAction.SET, Context3DStencilAction.SET, Context3DStencilAction.SET
+							);
+							context.setStencilReferenceValue(currentStencilIndex, 0xFF, 0xFF);
+							break;
+						case PrenderBatch.MASK_TYPE_CONTENT:
+							if (debugBatch) batchReasons.push(PrenderBatchReason.MASK_CONTENT);
+							context.setColorMask(true, true, true, true);
+							context.setStencilReferenceValue(currentStencilIndex, 0xFF, 0x00);
+							context.setStencilActions(
+								Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL,
+								Context3DStencilAction.KEEP, Context3DStencilAction.KEEP, Context3DStencilAction.KEEP
+							);
+							break;
+						default:
+							if (debugBatch) batchReasons.push("mask unknown");
+							break;
+					}
+				}
+				*/
+
                 //trace(batch.indexStart + ' - ' + batch.count);
                 context.drawTriangles(indexBuffer, indexStart, triangleCount);
             }
@@ -258,6 +366,11 @@ class HaxeLimeRenderFlash extends HaxeLimeRenderImpl {
 
         context.present();
     }
-
-
 }
+
+typedef TextureInfo = {
+	var vertex: Array<String>;
+	var fragment: Array<String>;
+	var options: Array<Bool>;
+};
+
