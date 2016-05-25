@@ -50,6 +50,9 @@ import com.jtransc.media.*;
 @HaxeCustomBuildCommandLine({
 	"@limebuild.cmd"
 })
+@HaxeCustomBuildAndRunCommandLine({
+	"@limetest.cmd"
+})
 @HaxeAddLibraries({
 	"lime:2.9.1"
 })
