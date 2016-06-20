@@ -1,0 +1,14 @@
+// http://jedicoder.blogspot.com.es/2011/11/automated-gradle-project-deployment-to.html
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+apply from: '../include.gradle'
+
+def gdxVersion = "${project.ext.libgdxVersion}"
+
+dependencies {
+	compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+	compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+	compile project(':jtransc-media-core')
+}

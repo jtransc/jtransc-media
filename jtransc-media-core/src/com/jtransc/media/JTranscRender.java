@@ -64,34 +64,34 @@ public final class JTranscRender {
 
     static public final int TYPE_RGBA = 0;
 
-    /**
-     * - Vertices is a float[] array containing 6 word elements:
-     * 0. x(float)
-     * 1. y(float)
-     * 2. tx(float)
-     * 3. ty(float)
-     * 4. col1(int/rgba8) multiplicative tinting
-     * 5. col2(int/rgba8) additive tinting
-     * - Indices contains indices to upload to the gpu:
-     * 0. index (short)
-     * - Batches contains a 16 word elements using the following:
-     * 0. indexStart(int)
-     * 1. triangleCount(int)
-     * 2. texture(int) (being -1 a solid color)
-     * 3. blendMode(int) BLEND_NORMAL=1, BLEND_ADD=8
-     * 4. maskType(int) MASK_NONE=0, MASK_SHAPE=1, MASK_CONTENT=2
-     * 5. stencilIndex(int)
-     * 6. scissorLeft(int)
-     * 7. scissorTop(int)
-     * 8. scissorRight(int)
-     * 9. scissorBottom(int)
-     * 10. _reserved_
-     * 11. _reserved_
-     * 12. _reserved_
-     * 13. _reserved_
-     * 14. _reserved_
-     * 15. _reserved_
-     */
+    //
+    // - Vertices is a float[] array containing 6 word elements:
+    // 0. x(float)
+    // 1. y(float)
+    // 2. tx(float)
+    // 3. ty(float)
+    // 4. col1(int/rgba8) multiplicative tinting
+    // 5. col2(int/rgba8) additive tinting
+    // - Indices contains indices to upload to the gpu:
+    // 0. index (short)
+    // - Batches contains a 16 word elements using the following:
+    // 0. indexStart(int)
+    // 1. triangleCount(int)
+    // 2. texture(int) (being -1 a solid color)
+    // 3. blendMode(int) BLEND_NORMAL=1, BLEND_ADD=8
+    // 4. maskType(int) MASK_NONE=0, MASK_SHAPE=1, MASK_CONTENT=2
+    // 5. stencilIndex(int)
+    // 6. scissorLeft(int)
+    // 7. scissorTop(int)
+    // 8. scissorRight(int)
+    // 9. scissorBottom(int)
+    // 10. _reserved_
+    // 11. _reserved_
+    // 12. _reserved_
+    // 13. _reserved_
+    // 14. _reserved_
+    // 15. _reserved_
+    //
 	static public void render(FastMemory vertices, int vertexCount, short[] indices, int indexCount, int[] batches, int batchCount) {
         impl.render(vertices, vertexCount, indices, indexCount, batches, batchCount);
     }

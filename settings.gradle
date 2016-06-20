@@ -1,0 +1,1 @@
+include 'jtransc-media-core', 'jtransc-media-libgdx', 'jtransc-media-lime', 'jtransc-media-game'
