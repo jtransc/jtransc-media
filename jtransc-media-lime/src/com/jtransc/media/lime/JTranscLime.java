@@ -62,8 +62,8 @@ import java.util.Locale;
 @HaxeAddLibraries({
 	"lime:2.9.1"
 })
-//@JTranscAddFile(target = "js", priority = -3003, process = true, prepend = "js/libgdx_polyfills.js")
-//@JTranscAddFile(target = "js", priority = -3002, process = true, prepend = "js/libgdx_assets.js")
+@JTranscAddFile(target = "js", priority = -3003, process = true, prepend = "js/media_polyfills.js")
+@JTranscAddFile(target = "js", priority = -3002, process = true, prepend = "js/media_utils.js")
 //@JTranscAddFile(target = "js", priority = -3001, process = true, prepend = "js/libgdx_keys.js")
 @JTranscAddFile(target = "js", priority = -3000, process = true, prepend = "js/media.js")
 @JTranscAddFile(target = "js", process = true, src = "js/template/index.html", dst = "index.html")
@@ -93,32 +93,39 @@ public class JTranscLime {
 	static private class JTranscEventLoopLimeImpl implements JTranscEventLoop.Impl {
 		@Override
 		@HaxeMethodBody("HaxeLimeJTranscApplication.loopInit(function() { p0.{% METHOD java.lang.Runnable:run %}(); });")
+		@JTranscMethodBody(target = "js", value = "Media.EventLoop.loopInit(function() { p0['{% METHOD java.lang.Runnable:run %}'](); });")
 		native public void init(Runnable init);
 
 		@Override
 		@HaxeMethodBody("HaxeLimeJTranscApplication.loopLoop(function() { p0.{% METHOD java.lang.Runnable:run %}(); }, function() { p1.{% METHOD java.lang.Runnable:run %}(); });")
+		@JTranscMethodBody(target = "js", value = "Media.EventLoop.loopLoop(function() { p0['{% METHOD java.lang.Runnable:run %}'](); }, function() { p1['{% METHOD java.lang.Runnable:run %}'](); });")
 		native public void loop(Runnable update, Runnable render);
 	}
 
 	static private class JTranscRenderLimeImpl implements JTranscRender.Impl {
 		@Override
 		@HaxeMethodBody("return HaxeLimeRender.createTexture(p0._str, p1, p2);")
+		@JTranscMethodBody(target = "js", value = "return Media.Texture.create(N.istr(p0), p1, p2, p3);")
 		native public int createTexture(String path, int width, int height, boolean mipmaps);
 
 		@Override
 		// haxe.io.Int32Array
 		@HaxeMethodBody("return HaxeLimeRender.createTextureMemory(p0.data, p1, p2, p3);")
+		@JTranscMethodBody(target = "js", value = "return Media.Texture.create(p0.data, p1, p2, p3, p4);")
 		native public int createTextureMemory(int[] data, int width, int height, int format, boolean mipmaps);
 
 		@Override
+		@JTranscMethodBody(target = "js", value = "return Media.Texture.createEncoded(p0.data, p1, p2, p3);")
 		native public int createTextureEncoded(byte[] data, int width, int height, boolean mipmaps);
 
 		@Override
 		@HaxeMethodBody("HaxeLimeRender.disposeTexture(p0);")
+		@JTranscMethodBody(target = "js", value = "return Media.Texture.dispose(p0);")
 		native public void disposeTexture(int textureId);
 
 		@Override
 		@HaxeMethodBody("HaxeLimeRender.render(p0.floatData, p1, p2.data, p3, p4.data, p5);")
+		@JTranscMethodBody(target = "js", value = "return Media.Render.render(p0.f32, p1, p2.data, p3, p4.data, p5);")
 		native public void render(FastMemory vertices, int vertexCount, short[] indices, int indexCount, int[] batches, int batchCount);
 	}
 
@@ -148,6 +155,12 @@ public class JTranscLime {
 			"});\n" +
 			"\n"
 		)
+		@JTranscMethodBody(target = "js", value = {
+			"Media.IO.readBytesAsync(N.istr(p0), function(data) {",
+			"   var ba = JA_B.fromTypedArray(data);",
+			"   p1['{% METHOD com.jtransc.media.JTranscCallback:handler %}'](null, ba);",
+			"});",
+		})
 		native public void readAsync(String path, JTranscCallback<byte[]> handler);
 
 		@Override
