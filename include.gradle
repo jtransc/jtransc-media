@@ -44,7 +44,7 @@ uploadArchives {
 			pom.project {
 				name "${project.name}"
 				packaging 'jar'
-				description 'JVM AOT compiler currently generating Haxe, with initial focus on kotlin and games.'
+				description 'JVM AOT compiler currently generating Javascript and Haxe, with initial focus on Kotlin and games.'
 				url 'https://github.com/jtransc/jtransc-media/'
 
 				scm {
