@@ -22,6 +22,63 @@ Media.EventLoop = function() {
  */
 var canvas = null;
 
+function handleResize() {
+	var width = window.innerWidth;
+	var height = window.innerHeight;
+	{% SMETHOD com.jtransc.media.JTranscWindow:setScreenSize %}(window.innerWidth, window.innerHeight);
+	canvas.width = width;
+	canvas.height = height;
+	canvas.style.width = width + 'px';
+	canvas.style.height = height + 'px';
+}
+
+Media.EventLoop.installEvents = function() {
+	window.addEventListener('resize', handleResize);
+
+	function mouseInfo() { return {% SFIELD com.jtransc.media.JTranscInput:mouseInfo %}; }
+	function keyInfo() { return {% SFIELD com.jtransc.media.JTranscInput:keyInfo %}; }
+	function inputImpl() { return {% SFIELD com.jtransc.media.JTranscInput:impl %}; }
+
+	function setScreenXY(x, y) {
+		mouseInfo()['{% METHOD com.jtransc.media.JTranscInput$MouseInfo:setScreenXY %}'](x|0, y|0);
+	}
+
+	/**
+	 * @param e MouseEvent
+	 */
+	window.addEventListener('mouseup', function(e) {
+		setScreenXY(e.clientX, e.clientY);
+		mouseInfo()["{% FIELD com.jtransc.media.JTranscInput$MouseInfo:buttons %}"] &= ~(1 << e.which);
+		inputImpl()["{% METHOD com.jtransc.media.JTranscInput$Handler:onMouseUp %}"](mouseInfo());
+	});
+	window.addEventListener('mousedown', function(e) {
+		setScreenXY(e.clientX, e.clientY);
+		mouseInfo()["{% FIELD com.jtransc.media.JTranscInput$MouseInfo:buttons %}"] |= (1 << e.which);
+		inputImpl()["{% METHOD com.jtransc.media.JTranscInput$Handler:onMouseDown %}"](mouseInfo());
+	});
+
+	window.addEventListener('mousemove', function(e) {
+		setScreenXY(e.clientX, e.clientY);
+		inputImpl()["{% METHOD com.jtransc.media.JTranscInput$Handler:onMouseMove %}"](mouseInfo());
+	});
+
+	window.addEventListener('mousewheel', function(e) {
+		inputImpl()["{% METHOD com.jtransc.media.JTranscInput$Handler:onMouseWheel %}"](e.deltaY|0);
+	});
+
+	window.addEventListener('keydown', function(e) {
+		keyInfo()["{% FIELD com.jtransc.media.JTranscInput$KeyInfo:keyCode %}"] = e.keyCode | 0;
+		inputImpl()["{% METHOD com.jtransc.media.JTranscInput$Handler:onKeyDown %}"](keyInfo());
+	});
+
+	window.addEventListener('keyup', function(e) {
+		keyInfo()["{% FIELD com.jtransc.media.JTranscInput$KeyInfo:keyCode %}"] = e.keyCode | 0;
+		inputImpl()["{% METHOD com.jtransc.media.JTranscInput$Handler:onKeyUp %}"](keyInfo());
+	});
+
+	handleResize();
+};
+
 /**
  * @type WebGLRenderingContext
  */
@@ -54,12 +111,14 @@ Media.EventLoop.loopInit = function(init) {
     	} catch(e) {
     	}
 
-    	gl.clearColor(1.0, 0.0, 0.0, 1.0);
-    	gl.clear(gl.COLOR_BUFFER_BIT);
+    	//gl.clearColor(1.0, 0.0, 0.0, 1.0);
+    	//gl.clear(gl.COLOR_BUFFER_BIT);
 
     	init();
 
     	Media.Render.init();
+
+		Media.EventLoop.installEvents();
 	}, 0);
 };
 
