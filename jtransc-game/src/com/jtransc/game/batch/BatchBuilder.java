@@ -8,7 +8,7 @@ import com.jtransc.game.math.Point;
 import com.jtransc.media.JTranscRender;
 
 public class BatchBuilder {
-	public FastMemory vertices = new FastMemory(4 * 6 * 16 * 1024);
+	public FastMemory vertices = FastMemory.alloc(4 * 6 * 16 * 1024);
 	public FastMemory4Float verticesFloat = new FastMemory4Float(vertices);
 	public FastMemory4Int verticesInt = new FastMemory4Int(vertices);
 	public short[] indices = new short[6 * 1024 * 6];
