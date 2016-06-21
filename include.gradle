@@ -1,3 +1,8 @@
+// http://jedicoder.blogspot.com.es/2011/11/automated-gradle-project-deployment-to.html
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
 group = "${project.ext.group}"
 version = "${project.ext.mediaVersion}"
 
