@@ -33,6 +33,12 @@ artifacts {
 	archives sourcesJar
 }
 
+dependencies {
+	compile "com.jtransc:jtransc-rt-core:${project.ext.jtranscVersion}"
+	testCompile "junit:junit:4.12"
+}
+
+
 signing {
 	sign configurations.archives
 }
