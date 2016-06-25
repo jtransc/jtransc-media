@@ -38,7 +38,7 @@ app.on('ready', function() {
 		width: {{ initialWidth }},
 		height: {{ initialHeight }},
 		autoHideMenuBar: true,
-		show: false,
+		show: true,
 		frame: true,
 	});
 

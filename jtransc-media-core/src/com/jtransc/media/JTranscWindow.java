@@ -10,6 +10,18 @@ public final class JTranscWindow {
 		void onResized();
 	}
 
+	static public class Impl {
+		public void setTitle(String title) {
+		}
+		public void setSize(int width, int height) {
+		}
+		public void show() {
+		}
+	}
+
+	static public Impl impl = new Impl() {
+	};
+
 	@JTranscKeep
 	static private double screenWidth = 640;
 	@JTranscKeep
@@ -45,8 +57,20 @@ public final class JTranscWindow {
 		}
 	}
 
+	@JTranscKeep
+	static public void setTitle(String title) {
+		impl.setTitle(title);
+	}
+
+	@JTranscKeep
 	static public void setScreenSize(int screenWidth, int screenHeight) {
 		_setSizes(screenWidth, screenHeight, virtualWidth, virtualHeight);
+		//impl.setSize(screenWidth, screenHeight);
+	}
+
+	@JTranscKeep
+	static public void show() {
+		impl.show();
 	}
 
 	static public void setVirtualSize(int virtualWidth, int virtualHeight) {
