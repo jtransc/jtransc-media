@@ -62,7 +62,6 @@ import java.util.Locale;
 @HaxeAddLibraries({
 	"lime:2.9.1"
 })
-@JTranscAddFile(target = "js", priority = -3004, process = true, prepend = "js/media_electron.js")
 @JTranscAddFile(target = "js", priority = -3003, process = true, prepend = "js/media_polyfills.js")
 @JTranscAddFile(target = "js", priority = -3002, process = true, prepend = "js/media_utils.js")
 //@JTranscAddFile(target = "js", priority = -3001, process = true, prepend = "js/libgdx_keys.js")
@@ -87,19 +86,19 @@ public class JTranscLime {
 
 	static public class JTranscWindowImpl extends JTranscWindow.Impl {
 		@Override
-		@JTranscMethodBody(target = "js", value = "libgdx.setTitle(N.istr(p0));")
+		@JTranscMethodBody(target = "js", value = "Media.Window.setTitle(N.istr(p0));")
 		public void setTitle(String title) {
 			super.setTitle(title);
 		}
 
 		@Override
-		@JTranscMethodBody(target = "js", value = "libgdx.setSize(p0, p1);")
+		@JTranscMethodBody(target = "js", value = "Media.Window.setSize(p0, p1);")
 		public void setSize(int width, int height) {
 			super.setSize(width, height);
 		}
 
 		@Override
-		@JTranscMethodBody(target = "js", value = "libgdx.show();")
+		@JTranscMethodBody(target = "js", value = "Media.Window.show();")
 		public void show() {
 			super.show();
 		}

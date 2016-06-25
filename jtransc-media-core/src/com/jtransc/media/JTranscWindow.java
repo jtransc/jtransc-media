@@ -63,6 +63,11 @@ public final class JTranscWindow {
 	}
 
 	@JTranscKeep
+	static public void setInitialSize(int screenWidth, int screenHeight) {
+		impl.setSize(screenWidth, screenHeight);
+	}
+
+	@JTranscKeep
 	static public void setScreenSize(int screenWidth, int screenHeight) {
 		_setSizes(screenWidth, screenHeight, virtualWidth, virtualHeight);
 		//impl.setSize(screenWidth, screenHeight);

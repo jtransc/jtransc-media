@@ -1,3 +1,24 @@
+var ipcRenderer = null;
+
+if (typeof require !== 'undefined') {
+	var electron = require('electron');
+	if (electron) {
+		ipcRenderer = electron.ipcRenderer;
+		console.log = function() { ipcRenderer.send('console.log', Array.from(arguments)); };
+		console.warn = function() { ipcRenderer.send('console.warn', Array.from(arguments)); };
+		console.error = function() { ipcRenderer.send('console.error', Array.from(arguments)); };
+		window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+            //alert("Error occured: " + errorMsg);//or any message
+            ipcRenderer.send('window.error', Array.from(arguments));
+            return false;
+        }
+	}
+}
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
 var Media = function() {
 };
 ////////////////////////////////////////////////////////////////////
@@ -9,6 +30,26 @@ Media.IO = function() {
 Media.IO.readBytesAsync = function(path, callback) {
 	downloadBytes(path, callback);
 };
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+Media.Window = function() {
+};
+
+Media.Window.setTitle = function(title) {
+	if (ipcRenderer != null) ipcRenderer.send('window.title', [title]);
+};
+
+Media.Window.setSize = function(width, height) {
+	if (ipcRenderer != null) ipcRenderer.send('window.size', [width, height]);
+};
+
+Media.Window.show = function() {
+	if (ipcRenderer != null) ipcRenderer.send('window.show', []);
+};
+
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -158,9 +199,23 @@ Media.Texture.allocId = function() {
 	return Media.Texture.availableIds.pop();
 };
 
-Media.Texture._createTextureAtId = function(id, image) {
+function createEmptyTexture() {
 	var glTexture = gl.createTexture();
-	Media.Texture.texturesById[id] = glTexture;
+
+	gl.bindTexture(gl.TEXTURE_2D, glTexture);
+
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,0,0,0]));
+
+	return glTexture;
+}
+
+Media.Texture._createTextureAtId = function(id, image) {
+	var glTexture = Media.Texture.texturesById[id];
 
 	gl.bindTexture(gl.TEXTURE_2D, glTexture);
 
@@ -172,11 +227,13 @@ Media.Texture._createTextureAtId = function(id, image) {
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
 	gl.bindTexture(gl.TEXTURE_2D, null);
-
 };
 
 Media.Texture.create = function(path, width, height, mipmaps) {
 	var id = Media.Texture.allocId();
+
+	var glTexture = createEmptyTexture();
+	Media.Texture.texturesById[id] = glTexture;
 
 	var img = document.createElement('img');
 	//Media.Texture.imagesById[id] = img;
@@ -191,7 +248,7 @@ Media.Texture.create = function(path, width, height, mipmaps) {
 Media.Texture.createMemory = function(data, width, height, mipmaps) {
 	var id = Media.Texture.allocId();
 
-	var glTexture = gl.createTexture();
+	var glTexture = createEmptyTexture();
 	Media.Texture.texturesById[id] = glTexture;
 
 	gl.bindTexture(gl.TEXTURE_2D, glTexture);
@@ -205,11 +262,13 @@ Media.Texture.createMemory = function(data, width, height, mipmaps) {
 
 	gl.bindTexture(gl.TEXTURE_2D, null);
 
-
 	return id;
 };
 Media.Texture.createEncoded = function(data, width, height, mipmaps) {
 	var id = Media.Texture.allocId();
+
+	var glTexture = createEmptyTexture();
+	Media.Texture.texturesById[id] = glTexture;
 
 	var img = document.createElement('img');
 	var blob = new Blob( [ data ], { type: "image/jpeg" } );
@@ -248,6 +307,7 @@ Media.Render.glMatrixUniform = null;
 Media.Render.glImageUniform = null;
 Media.Render.indicesBuffer = null;
 Media.Render.verticesBuffer = null;
+Media.Render.initialized = false;
 
 Media.Render.init = function() {
 	function compileShader(source, type) {
@@ -330,6 +390,8 @@ Media.Render.init = function() {
 	// Uniforms
 	Media.Render.glMatrixUniform = gl.getUniformLocation(Media.Render.program, "u_matrix");
 	Media.Render.glImageUniform = gl.getUniformLocation(Media.Render.program, "u_sampler");
+
+	Media.Render.initialized = true;
 };
 
 function glEnableDisable(gl, type, cond) {
@@ -400,6 +462,8 @@ Media.Render.render = function(vertices, vertexCount, indices, indexCount, batch
 	gl.clearStencil(0);
 
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
+
+	if (!Media.Render.initialized) return;
 
 	gl.useProgram(Media.Render.program);
 
