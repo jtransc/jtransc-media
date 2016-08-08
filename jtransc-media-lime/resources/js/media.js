@@ -147,8 +147,15 @@ Media.EventLoop.loopInit = function(init) {
 
     	gl = null;
     	try {
+			var options = {
+				alpha: false,
+				depth: false,
+				stencil: true,
+				antialias: false,
+				premultipliedAlpha: true
+			};
     		// Try to grab the standard context. If it fails, fallback to experimental.
-    		gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    		gl = canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options);
     	} catch(e) {
     	}
 

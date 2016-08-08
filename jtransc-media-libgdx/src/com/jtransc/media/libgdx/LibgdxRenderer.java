@@ -19,9 +19,9 @@ class LibgdxRenderer implements JTranscRender.Impl {
 
 	public LibgdxRenderer() {
 		for (int n = 2047; n >= 0; n--) textureIds.push(n);
-		System.out.println("com.jtransc.media.libgdx.LibgdxRenderer()");
+		System.out.println("LibgdxRenderer()");
 		int blankTextureId = createTextureMemory(new int[]{0xFFFFFFFF}, 1, 1, JTranscRender.TYPE_RGBA, false);
-		System.out.println("com.jtransc.media.libgdx.LibgdxRenderer() : " + blankTextureId);
+		System.out.println("LibgdxRenderer() : " + blankTextureId);
 	}
 
 	@Override
