@@ -13,8 +13,10 @@ public final class JTranscWindow {
 	static public class Impl {
 		public void setTitle(String title) {
 		}
+
 		public void setSize(int width, int height) {
 		}
+
 		public void show() {
 		}
 	}

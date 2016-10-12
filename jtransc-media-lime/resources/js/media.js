@@ -1,4 +1,4 @@
-var ipcRenderer = null;
+                                  var ipcRenderer = null;
 
 if (typeof require !== 'undefined') {
 	var electron = require('electron');
@@ -179,17 +179,34 @@ Media.EventLoop.loopLoop = function(update, render) {
 	frame();
 };
 
+function range(max) {
+	var out = [];
+	for (var n = 0; n < max; n++) out.push(n);
+	return out;
+}
+
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 Media.Sound = function() {
 };
+Media.Sound.files = new Map();
+Media.Sound.fileIds = range(1000);
 Media.Sound.create = function(path) {
-	return 0;
+	var path2 = ('' + path).replace(/^\/?assets/, '');
+	var id = Media.Sound.fileIds.pop();
+	Media.Sound.files[id] = new buzz.sound(path2);
+	return id;
 };
 Media.Sound.play = function(id) {
+	var file = Media.Sound.files[id];
+	if (file) {
+		file.play();
+	}
 };
 Media.Sound.dispose = function(id) {
+	Media.Sound.files.delete(id);
+	Media.Sound.fileIds.push(id);
 };
 
 ////////////////////////////////////////////////////////////////////

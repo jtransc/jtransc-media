@@ -30,8 +30,12 @@ class LibgdxRenderer implements JTranscRender.Impl {
 		FileHandle fileHandle = Gdx.files.internal(path);
 		System.out.println("Loading texture... " + fileHandle.file().getAbsolutePath() + ", exists: " + fileHandle.exists());
 		//textures[textureId] = new com.badlogic.gdx.graphics.Texture(fileHandle.file().getAbsolutePath());
-		textures[textureId] = new Texture2(new com.badlogic.gdx.graphics.Texture(fileHandle, mipmaps), mipmaps);
+		Texture2 tex = new Texture2(new com.badlogic.gdx.graphics.Texture(fileHandle, mipmaps), mipmaps);
+		textures[textureId] = tex;
 		System.out.println(" ---> " + textureId);
+		System.out.println(" ---> " + tex);
+		System.out.println(" ---> " + tex.texture);
+
 		return textureId;
 	}
 

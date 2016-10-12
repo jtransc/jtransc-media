@@ -62,6 +62,7 @@ import java.util.Locale;
 @HaxeAddLibraries({
 	"lime:2.9.1"
 })
+@JTranscAddFile(target = "js", priority = -3004, process = true, prepend = "js/buzz.js")
 @JTranscAddFile(target = "js", priority = -3003, process = true, prepend = "js/media_polyfills.js")
 @JTranscAddFile(target = "js", priority = -3002, process = true, prepend = "js/media_utils.js")
 //@JTranscAddFile(target = "js", priority = -3001, process = true, prepend = "js/libgdx_keys.js")
