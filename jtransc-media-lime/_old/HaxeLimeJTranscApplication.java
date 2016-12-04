@@ -19,11 +19,11 @@ public class HaxeLimeJTranscApplication extends lime.app.Application {
         }
         HaxeLimeRender.setSize(window.width, window.height);
         if (HaxeLimeRender.isInitialized()) {
-            if (!initialized && HaxeNatives.initHandler != null) {
+            if (!initialized && N.initHandler != null) {
                 initialized = true;
-                HaxeNatives.initHandler();
+				N.initHandler();
             }
-            if (HaxeNatives.renderHandler != null) HaxeNatives.renderHandler();
+            if (N.renderHandler != null) N.renderHandler();
         }
     }
 
@@ -31,13 +31,13 @@ public class HaxeLimeJTranscApplication extends lime.app.Application {
     public void update(int deltaTime) {
         super.update(deltaTime);
         if (HaxeLimeRender.isInitialized()) {
-            if (HaxeNatives.updateHandler != null) HaxeNatives.updateHandler();
+            if (N.updateHandler != null) N.updateHandler();
         }
     }
 
     public HaxeLimeJTranscApplication() {
         super();
-        HaxeNatives.enabledDefaultEventLoop = false;
+		N.enabledDefaultEventLoop = false;
         addModule(new JTranscModule());
     }
 }

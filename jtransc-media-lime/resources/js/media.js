@@ -254,6 +254,8 @@ Media.Texture._createTextureAtId = function(id, image) {
 };
 
 Media.Texture.create = function(path, width, height, mipmaps) {
+	var path2 = ('' + path).replace(/^\/?assets/, '');
+
 	var id = Media.Texture.allocId();
 
 	var glTexture = createEmptyTexture();
@@ -265,7 +267,7 @@ Media.Texture.create = function(path, width, height, mipmaps) {
 	img.onload = function() {
 		Media.Texture._createTextureAtId(id, img);
 	};
-	img.src = path;
+	img.src = path2;
 
 	return id;
 };

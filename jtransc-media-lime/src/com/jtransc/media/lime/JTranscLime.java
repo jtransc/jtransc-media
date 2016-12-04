@@ -1,10 +1,7 @@
 package com.jtransc.media.lime;
 
 import com.jtransc.FastMemory;
-import com.jtransc.annotation.JTranscAddFile;
-import com.jtransc.annotation.JTranscMethodBody;
-import com.jtransc.annotation.JTranscRegisterCommand;
-import com.jtransc.annotation.JTranscRunCommand;
+import com.jtransc.annotation.*;
 import com.jtransc.annotation.haxe.*;
 import com.jtransc.io.JTranscSyncIO;
 import com.jtransc.experimental.kotlin.JTranscKotlinReflectStripper;
@@ -33,7 +30,7 @@ import java.util.Locale;
 	"    public function new() {\n" +
 	"        super();\n" +
 	"        {{ inits }}\n" +
-	"        {{ mainClass }}.{{ mainMethod }}(HaxeNatives.strArray(HaxeNatives.args()));\n" +
+	"        {{ mainClass }}.{{ mainMethod }}(N.strArray(N.args()));\n" +
 	"    }\n" +
 	"}\n"
 )
@@ -60,19 +57,21 @@ import java.util.Locale;
 	"@limetest.cmd"
 })
 @HaxeAddLibraries({
-	"lime:2.9.1"
+	"lime:3.4.1"
+	//"lime:2.9.1"
 })
-@JTranscAddFile(target = "js", priority = -3004, process = true, prepend = "js/buzz.js")
-@JTranscAddFile(target = "js", priority = -3003, process = true, prepend = "js/media_polyfills.js")
-@JTranscAddFile(target = "js", priority = -3002, process = true, prepend = "js/media_utils.js")
+@JTranscAddFile(target = "js", priority = 0, process = true, prepend = "js/buzz.js")
+@JTranscAddFile(target = "js", priority = 1, process = true, prepend = "js/media_polyfills.js")
+@JTranscAddFile(target = "js", priority = 2, process = true, prepend = "js/media_utils.js")
 //@JTranscAddFile(target = "js", priority = -3001, process = true, prepend = "js/libgdx_keys.js")
-@JTranscAddFile(target = "js", priority = -3000, process = true, prepend = "js/media.js")
+@JTranscAddFile(target = "js", priority = 3, process = true, prepend = "js/media.js")
 @JTranscAddFile(target = "js", process = true, src = "js/template/index.html", dst = "index.html")
 @JTranscAddFile(target = "js", process = true, src = "js/template/electron-main.js", dst = "electron-main.js")
 //@JTranscAddFile(target = "all", process = false, isAsset = true, src = "com/badlogic/gdx/utils/arial-15.fnt", dst = "com/badlogic/gdx/utils/arial-15.fnt")
 //@JTranscAddFile(target = "all", process = false, isAsset = true, src = "com/badlogic/gdx/utils/arial-15.png", dst = "com/badlogic/gdx/utils/arial-15.png")
 @JTranscRegisterCommand(target = "js", name = "electron", command = "electron", check = { "electron", "--version" }, getFolderCmd = { "npm", "list", "-g" }, install = {"npm", "-g", "install", "electron-prebuilt" })
 @JTranscRunCommand(target = "js", value = { "electron", "{{ outputFolder }}/electron-main.js" })
+@JTranscAddKeywords(target = "all", value = { "GL", "gl", "app" })
 public class JTranscLime {
 	static public void init() {
 		JTranscKotlinReflectStripper.init();
@@ -172,7 +171,7 @@ public class JTranscLime {
 		@HaxeMethodBody("" +
 			"var futureBytes = HaxeLimeAssets.loadBytes(p0._str);\n" +
 			"futureBytes.onComplete(function(bytes) {\n" +
-			"   p1.{% METHOD com.jtransc.media.JTranscCallback:handler %}(null, HaxeArrayByte.fromBytes(bytes));\n" +
+			"   p1.{% METHOD com.jtransc.media.JTranscCallback:handler %}(null, JA_B.fromBytes(bytes));\n" +
 			"});\n" +
 			"\n"
 		)

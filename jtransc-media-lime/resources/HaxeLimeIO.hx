@@ -3,7 +3,7 @@ class HaxeLimeIO {
         #if sys
         try {
             var bytes = sys.io.File.getBytes(path);
-            callback(null, HaxeArrayByte.fromBytes(bytes));
+            callback(null, JA_B.fromBytes(bytes));
         } catch (e:Dynamic) {
             callback(newException('Cannot read file "$path"'), null);
         }
