@@ -25,8 +25,7 @@ public class JTranscGame {
 	final public Point mouse = new Point(-1000, -1000);
 	public int mouseButtons = 0;
 
-	//private boolean[] pressingKeys = new boolean[Keys.MAX]; // @TODO: Bug with treeshaking?
-	public boolean[] pressingKeys = new boolean[Keys.MAX];
+	private boolean[] pressingKeys = new boolean[Keys.MAX];
 
 	static public JTranscGame instance;
 
